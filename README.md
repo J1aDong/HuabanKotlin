@@ -3,6 +3,7 @@
 
 ## 第三方开源库
 * [kotlin](https://github.com/JetBrains/kotlin)
+* [BottomNavigation](https://github.com/Ashok-Varma/BottomNavigation)
 
 ## 参考文档
 * [使用 Kotlin 和 Anko 的安卓开发入门](https://realm.io/cn/news/getting-started-with-kotlin-and-anko/)

@@ -55,6 +55,8 @@ dependencies {
     // For appcompat-v7 bindings
     compile project(':library')
 
+    compile rootProject.ext.dependencies["bottom-navigation"]
+
     kapt rootProject.ext.dependencies["dagger2-apt-compiler"]
 //    apt rootProject.ext.dependencies["dagger2-apt-compiler"]
     provided rootProject.ext.dependencies["javax.annotation"]
