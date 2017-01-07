@@ -1,6 +1,6 @@
 package me.jessyan.rxerrorhandler.utils;
 
-import android.support.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by jess on 26/09/2016 13:59

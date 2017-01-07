@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.neenbedankt.android-apt'
+
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
     buildToolsVersion rootProject.ext.android["buildToolsVersion"]
@@ -16,6 +18,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 }
 
@@ -61,4 +66,8 @@ dependencies {
     compile rootProject.ext.dependencies["glide"]
     apt rootProject.ext.dependencies["dagger2-apt-compiler"]
     compile project(':rxerrorhandler')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
