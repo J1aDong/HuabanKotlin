@@ -26,8 +26,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile rootProject.ext.dependencies["rxjava"]
-    compile 'org.jetbrains:annotations-java5:15.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile rootProject.ext.dependencies["annotations"]
 }
 repositories {
     mavenCentral()

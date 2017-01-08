@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="btn_next" type="id" />
-    <item name="root_view" type="id" />
+    <item name="fl_container" type="id" />
 </resources>

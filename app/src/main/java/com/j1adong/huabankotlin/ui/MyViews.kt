@@ -1,7 +1,10 @@
-package com.j1adong.huabankotlin.common
+@file:Suppress("NOTHING_TO_INLINE")
+
+package com.j1adong.huabankotlin.ui
 
 import android.view.ViewManager
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
+import com.jess.arms.widget.CustomViewPager
 import com.jess.arms.widget.KikkatStatusView
 import org.jetbrains.anko.custom.ankoView
 
@@ -17,3 +20,7 @@ inline fun ViewManager.kikkatStatusView(theme: Int = 0, init: KikkatStatusView.(
 inline fun ViewManager.bottomNavigationBar(theme: Int = 0) = bottomNavigationBar(theme) {}
 
 inline fun ViewManager.bottomNavigationBar(theme: Int = 0, init: BottomNavigationBar.() -> Unit) = ankoView({ BottomNavigationBar(it) }, theme, init)
+
+inline fun ViewManager.customViewPager(theme: Int = 0) = customViewPager(theme) {}
+
+inline fun ViewManager.customViewPager(theme: Int = 0, init: CustomViewPager.() -> Unit) = ankoView({ CustomViewPager(it) }, theme, init)

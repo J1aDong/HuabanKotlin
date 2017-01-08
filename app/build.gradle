@@ -13,6 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         debug {
@@ -57,11 +58,10 @@ dependencies {
 
     compile rootProject.ext.dependencies["bottom-navigation"]
 
-    kapt rootProject.ext.dependencies["dagger2-apt-compiler"]
-//    apt rootProject.ext.dependencies["dagger2-apt-compiler"]
+//    kapt rootProject.ext.dependencies["dagger2-apt-compiler"]
+    apt rootProject.ext.dependencies["dagger2-apt-compiler"]
     provided rootProject.ext.dependencies["javax.annotation"]
 
-    compile rootProject.ext.dependencies["paginate"]
     debugCompile rootProject.ext.dependencies["canary-debug"]
     releaseCompile rootProject.ext.dependencies["canary-release"]
     testCompile rootProject.ext.dependencies["canary-release"]

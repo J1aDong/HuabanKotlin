@@ -1,6 +1,6 @@
 package com.j1adong.huabankotlin.di.component;
 
-import com.j1adong.huabankotlin.MainActivity;
+import com.j1adong.huabankotlin.ui.activity.MainActivity;
 import com.j1adong.huabankotlin.di.module.HomeModule;
 import com.jess.arms.di.scope.ActivityScope;
 

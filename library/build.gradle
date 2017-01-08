@@ -5,7 +5,6 @@ apply plugin: 'com.neenbedankt.android-apt'
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
     buildToolsVersion rootProject.ext.android["buildToolsVersion"]
-    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion rootProject.ext.android["minSdkVersion"]
@@ -34,7 +33,6 @@ buildscript {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -68,6 +66,7 @@ dependencies {
     compile project(':rxerrorhandler')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
 repositories {
     mavenCentral()
 }

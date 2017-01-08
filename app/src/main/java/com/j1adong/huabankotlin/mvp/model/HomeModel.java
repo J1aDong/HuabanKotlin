@@ -1,6 +1,6 @@
 package com.j1adong.huabankotlin.mvp.model;
 
-import com.j1adong.huabankotlin.mvp.contract.HomeContract;
+import com.j1adong.huabankotlin.mvp.contract.HomeActivityContract;
 import com.j1adong.huabankotlin.mvp.model.cache.CacheManager;
 import com.j1adong.huabankotlin.mvp.model.service.ServiceManager;
 import com.jess.arms.di.scope.ActivityScope;
@@ -13,7 +13,7 @@ import javax.inject.Inject;
  */
 @ActivityScope
 public class HomeModel extends BaseModel<ServiceManager, CacheManager>
-		implements HomeContract.Model
+		implements HomeActivityContract.Model
 {
 
 	@Inject

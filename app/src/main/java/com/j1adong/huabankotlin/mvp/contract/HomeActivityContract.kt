@@ -7,7 +7,7 @@ import com.jess.arms.mvp.IModel
  * Created by J1aDong on 2017/1/6.
  */
 
-interface HomeContract {
+interface HomeActivityContract {
 
     interface View : BaseView
 
