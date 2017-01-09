@@ -4,6 +4,7 @@ import android.app.Application;
 import android.text.TextUtils;
 
 import com.jess.arms.http.GlobeHttpHandler;
+import com.jess.arms.rx.rxerrorhandler.handler.listener.ResponseErroListener;
 import com.jess.arms.utils.DataHelper;
 
 import java.io.File;
@@ -14,7 +15,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import me.jessyan.rxerrorhandler.handler.listener.ResponseErroListener;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 

@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
-
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
  * 由于每个项目包结构都不一定相同,所以每生成一个文件需要自己导入import包名,可以在设置中设置自动导入包名
@@ -28,22 +27,27 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  */
 
 @ActivityScope
-public class MainFragmentModel extends BaseModel<ServiceManager, CacheManager> implements MainFragmentContract.Model {
-    private Gson mGson;
-    private Application mApplication;
+public class MainFragmentModel extends BaseModel<ServiceManager, CacheManager>
+		implements MainFragmentContract.Model
+{
+	private Gson mGson;
+	private Application mApplication;
 
-    @Inject
-    public MainFragmentModel(ServiceManager serviceManager, CacheManager cacheManager, Gson gson, Application application) {
-        super(serviceManager, cacheManager);
-        this.mGson = gson;
-        this.mApplication = application;
-    }
+	@Inject
+	public MainFragmentModel(ServiceManager serviceManager,
+			CacheManager cacheManager, Gson gson, Application application)
+	{
+		super(serviceManager, cacheManager);
+		this.mGson = gson;
+		this.mApplication = application;
+	}
 
-    @Override
-    public void onDestory() {
-        super.onDestory();
-        this.mGson = null;
-        this.mApplication = null;
-    }
+	@Override
+	public void onDestory()
+	{
+		super.onDestory();
+		this.mGson = null;
+		this.mApplication = null;
+	}
 
 }

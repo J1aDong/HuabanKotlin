@@ -25,26 +25,31 @@ import dagger.Provides;
  */
 
 @Module
-public class MainFragmentModule {
-    private MainFragmentContract.View view;
+public class MainFragmentModule
+{
+	private MainFragmentContract.View view;
 
-    /**
-     * 构建MainFragmentModule时,将View的实现类传进来,这样就可以提供View的实现类给presenter
-     * @param view
-     */
-    public MainFragmentModule(MainFragmentContract.View view) {
-        this.view = view;
-    }
+	/**
+	 * 构建MainFragmentModule时,将View的实现类传进来,这样就可以提供View的实现类给presenter
+	 * 
+	 * @param view
+	 */
+	public MainFragmentModule(MainFragmentContract.View view)
+	{
+		this.view = view;
+	}
 
-    @ActivityScope
-    @Provides
-    MainFragmentContract.View provideMainFragmentView() {
-        return this.view;
-    }
+	@ActivityScope
+	@Provides
+	MainFragmentContract.View provideMainFragmentView()
+	{
+		return this.view;
+	}
 
-    @ActivityScope
-    @Provides
-    MainFragmentContract.Model provideMainFragmentModel(MainFragmentModel model) {
-        return model;
-    }
+	@ActivityScope
+	@Provides
+	MainFragmentContract.Model provideMainFragmentModel(MainFragmentModel model)
+	{
+		return model;
+	}
 }

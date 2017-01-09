@@ -1,25 +1,23 @@
 package com.j1adong.huabankotlin.ui.fragment
 
-import android.content.Intent
-import android.view.Gravity
-import android.view.LayoutInflater
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
-import com.j1adong.huabankotlin.ui.activity.MainActivity
-
 import com.j1adong.huabankotlin.R
+import com.j1adong.huabankotlin.adapter.PinsViewProvider
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract
+import com.j1adong.huabankotlin.mvp.entity.PinsEntity
 import com.j1adong.huabankotlin.mvp.presenter.HomeFragmentPresenter
-import com.jess.arms.utils.UiUtils
-
-import org.jetbrains.anko.AnkoComponent
-import org.jetbrains.anko.AnkoContext
-
-import com.jess.arms.utils.Preconditions.checkNotNull
-import org.jetbrains.anko.textView
-import org.jetbrains.anko.verticalLayout
+import com.jess.arms.widget.recyclerview.GridSpacingItemDecoration
+import com.jess.arms.widget.recyclerview.SpacesItemDecoration
+import me.drakeet.multitype.Items
+import me.drakeet.multitype.MultiTypeAdapter
+import org.jetbrains.anko.*
+import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.support.v4.find
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -35,6 +33,13 @@ import org.jetbrains.anko.verticalLayout
  */
 
 class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.View {
+    override fun refresh() {
+        mAdapter?.notifyDataSetChanged()
+    }
+
+    private var mRecyclerView: RecyclerView? = null
+
+    private var mAdapter: MultiTypeAdapter? = null
 
     override fun setupFragmentComponent(appComponent: AppComponent) {
         InjectionHeader.inject(appComponent, this)
@@ -45,7 +50,17 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
     }
 
     override fun initData() {
+        val items = Items()
+        mAdapter = MultiTypeAdapter(items)
+        mAdapter?.register(PinsEntity::class.java, PinsViewProvider())
 
+        mRecyclerView = find<RecyclerView>(HomeFragmentUI.ID_RECYCLERVIEW)
+        mRecyclerView?.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        val deco = GridSpacingItemDecoration(2, 16, true)
+        mRecyclerView?.adapter = mAdapter
+        mPresenter.requestAll(items)
+
+        mRecyclerView?.addItemDecoration(deco)
     }
 
     /**
@@ -73,13 +88,6 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
     }
 
     override fun showMessage(message: String) {
-        checkNotNull(message)
-        UiUtils.SnackbarText(message)
-    }
-
-    override fun launchActivity(intent: Intent) {
-        checkNotNull(intent)
-        UiUtils.startActivity(intent)
     }
 
     override fun killMyself() {
@@ -98,12 +106,18 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
 
         override fun createView(ui: AnkoContext<HomeFragment>) = with(ui) {
             verticalLayout {
-                textView {
-                    text = "HomeFragment"
-                }.lparams {
-                    gravity = Gravity.CENTER
+                recyclerView {
+                    id = ID_RECYCLERVIEW
+                    backgroundColor = ui.ctx.resources.getColor(R.color.md_grey_200)
+                    clipToPadding = false
+                    topPadding = 200
+                }.lparams(width = matchParent, height = matchParent) {
                 }
             }
+        }
+
+        companion object Factory {
+            val ID_RECYCLERVIEW = 1001
         }
     }
 

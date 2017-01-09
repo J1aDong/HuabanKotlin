@@ -12,7 +12,6 @@ import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.widget.fragmention.SupportActivity;
 import com.jess.arms.widget.fragmention.SupportFragment;
 import com.jess.arms.widget.fragmention.helper.FragmentLifecycleCallbacks;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
@@ -21,15 +20,11 @@ import org.simple.eventbus.EventBus;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 public abstract class BaseActivity<P extends BasePresenter>
 		extends SupportActivity
 {
 	protected final String TAG = this.getClass().getSimpleName();
 	protected BaseApplication mApplication;
-	private Unbinder mUnbinder;
 	@Inject
 	protected P mPresenter;
 
@@ -67,17 +62,12 @@ public abstract class BaseActivity<P extends BasePresenter>
 	protected void onResume()
 	{
 		super.onResume();
-		mApplication.getAppManager().setCurrentActivity(this);
 	}
 
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-		if( mApplication.getAppManager().getCurrentActivity() == this )
-		{
-			mApplication.getAppManager().setCurrentActivity(null);
-		}
 	}
 
 	@Nullable
@@ -92,9 +82,6 @@ public abstract class BaseActivity<P extends BasePresenter>
 		if( getIntent() != null )
 			isNotAdd = getIntent()
 					.getBooleanExtra(IS_NOT_ADD_ACTIVITY_LIST, false);
-
-		if( !isNotAdd )
-			mApplication.getAppManager().addActivity(this);
 
 		if( useEventBus() )// 如果要使用eventbus请将此方法返回true
 			EventBus.getDefault().register(this);// 注册到事件主线
@@ -116,8 +103,6 @@ public abstract class BaseActivity<P extends BasePresenter>
 			// 省略其余生命周期方法
 		});
 
-		// 绑定到butterknife
-		mUnbinder = ButterKnife.bind(this);
 		ComponentInject();// 依赖注入
 		initData();
 	}
@@ -155,15 +140,11 @@ public abstract class BaseActivity<P extends BasePresenter>
 	protected void onDestroy()
 	{
 		super.onDestroy();
-		mApplication.getAppManager().removeActivity(this);
 		if( mPresenter != null )
 			mPresenter.onDestroy();// 释放资源
-		if( mUnbinder != Unbinder.EMPTY )
-			mUnbinder.unbind();
 		if( useEventBus() )// 如果要使用eventbus请将此方法返回true
 			EventBus.getDefault().unregister(this);
 		this.mPresenter = null;
-		this.mUnbinder = null;
 		this.mApplication = null;
 	}
 

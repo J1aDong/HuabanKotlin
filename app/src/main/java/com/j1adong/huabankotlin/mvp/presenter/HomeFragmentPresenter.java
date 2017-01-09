@@ -3,14 +3,21 @@ package com.j1adong.huabankotlin.mvp.presenter;
 import android.app.Application;
 
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract;
-import com.jess.arms.base.AppManager;
+import com.j1adong.huabankotlin.mvp.entity.HbData;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
+import com.jess.arms.rx.rxerrorhandler.handler.RetryWithDelay;
+import com.jess.arms.utils.RxUtils;
 import com.jess.arms.widget.imageloader.ImageLoader;
-
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import com.socks.library.KLog;
 
 import javax.inject.Inject;
+
+import me.drakeet.multitype.Items;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -32,19 +39,34 @@ public class HomeFragmentPresenter extends
 	private RxErrorHandler mErrorHandler;
 	private Application mApplication;
 	private ImageLoader mImageLoader;
-	private AppManager mAppManager;
 
 	@Inject
 	public HomeFragmentPresenter(HomeFragmentContract.Model model,
 			HomeFragmentContract.View rootView, RxErrorHandler handler,
-			Application application, ImageLoader imageLoader,
-			AppManager appManager)
+			Application application, ImageLoader imageLoader)
 	{
 		super(model, rootView);
 		this.mErrorHandler = handler;
 		this.mApplication = application;
 		this.mImageLoader = imageLoader;
-		this.mAppManager = appManager;
+	}
+
+	public void requestAll(final Items items)
+	{
+		mModel.getAll(10, true).subscribeOn(Schedulers.io())
+				.retryWhen(new RetryWithDelay(3, 2))
+				.observeOn(AndroidSchedulers.mainThread())
+				.compose(RxUtils.<HbData> bindToLifecycle(mRootView))
+				.subscribe(new Action1<HbData>()
+				{
+					@Override
+					public void call(HbData hbData)
+					{
+						KLog.w(hbData.toString());
+						items.addAll(hbData.getPins());
+						mRootView.refresh();
+					}
+				});
 	}
 
 	@Override
@@ -52,7 +74,6 @@ public class HomeFragmentPresenter extends
 	{
 		super.onDestroy();
 		this.mErrorHandler = null;
-		this.mAppManager = null;
 		this.mImageLoader = null;
 		this.mApplication = null;
 	}

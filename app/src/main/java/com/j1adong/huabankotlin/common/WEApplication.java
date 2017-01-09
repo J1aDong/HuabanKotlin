@@ -9,18 +9,12 @@ import com.j1adong.huabankotlin.mvp.model.Api;
 import com.jess.arms.base.BaseApplication;
 import com.jess.arms.di.module.GlobeConfigModule;
 import com.jess.arms.http.GlobeHttpHandler;
-import com.jess.arms.utils.UiUtils;
+import com.jess.arms.rx.rxerrorhandler.handler.listener.ResponseErroListener;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 import android.content.Context;
-import android.text.TextUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import me.jessyan.rxerrorhandler.handler.listener.ResponseErroListener;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -66,11 +60,6 @@ public class WEApplication extends BaseApplication
 	public void onTerminate()
 	{
 		super.onTerminate();
-		if( mAppManager != null )
-		{// 释放资源
-			this.mAppManager.release();
-			this.mAppManager = null;
-		}
 	}
 
 	/**
@@ -105,7 +94,7 @@ public class WEApplication extends BaseApplication
 	@Override
 	protected GlobeConfigModule getGlobeConfigModule()
 	{
-		return GlobeConfigModule.buidler().baseurl(Api.APP_BASEURL)
+		return GlobeConfigModule.buidler().baseurl(Api.APP_BASE_URL)
 				.globeHttpHandler(new GlobeHttpHandler()
 				{// 这里可以提供一个全局处理http响应结果的处理类,
 					// 这里可以比客户端提前一步拿到服务器返回的结果,可以做一些操作,比如token超时,重新获取
@@ -115,26 +104,26 @@ public class WEApplication extends BaseApplication
 					{
 						// 这里可以先客户端一步拿到每一次http请求的结果,可以解析成json,做一些操作,如检测到token过期后
 						// 重新请求token,并重新执行请求
-						try
-						{
-							if( !TextUtils.isEmpty(httpResult) )
-							{
-								JSONArray array = new JSONArray(httpResult);
-								JSONObject object = (JSONObject) array.get(0);
-								String login = object.getString("login");
-								String avatar_url = object
-										.getString("avatar_url");
-								Timber.tag(TAG)
-										.w("result ------>" + login
-												+ "    ||   avatar_url------>"
-												+ avatar_url);
-							}
-
-						} catch( JSONException e )
-						{
-							e.printStackTrace();
-							return response;
-						}
+						// try
+						// {
+						// if( !TextUtils.isEmpty(httpResult) )
+						// {
+						// JSONArray array = new JSONArray(httpResult);
+						// JSONObject object = (JSONObject) array.get(0);
+						// String login = object.getString("login");
+						// String avatar_url = object
+						// .getString("avatar_url");
+						// Timber.tag(TAG)
+						// .w("result ------>" + login
+						// + " || avatar_url------>"
+						// + avatar_url);
+						// }
+						//
+						// } catch( JSONException e )
+						// {
+						// e.printStackTrace();
+						// return response;
+						// }
 
 						// 这里如果发现token过期,可以先请求最新的token,然后在拿新的token放入request里去重新请求
 						// 注意在这个回调之前已经调用过proceed,所以这里必须自己去建立网络请求,如使用okhttp使用新的request去请求
@@ -175,7 +164,6 @@ public class WEApplication extends BaseApplication
 							Exception e)
 					{
 						Timber.tag(TAG).w("------------>" + e.getMessage());
-						UiUtils.SnackbarText("net error");
 					}
 				}).build();
 	}

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
@@ -21,15 +20,7 @@ import android.widget.Toast;
 
 import com.jess.arms.base.BaseApplication;
 
-import org.simple.eventbus.EventBus;
-
 import java.security.MessageDigest;
-
-import static com.jess.arms.base.AppManager.APPMANAGER_MESSAGE;
-import static com.jess.arms.base.AppManager.APP_EXIT;
-import static com.jess.arms.base.AppManager.KILL_ALL;
-import static com.jess.arms.base.AppManager.SHOW_SNACKBAR;
-import static com.jess.arms.base.AppManager.START_ACTIVITY;
 
 /**
  * Created by jess on 2015/11/23.
@@ -205,32 +196,6 @@ public class UiUtils {
         mToast.show();
     }
 
-    /**
-     * 用snackbar显示
-     *
-     * @param text
-     */
-    public static void SnackbarText(String text) {
-        Message message = new Message();
-        message.what = SHOW_SNACKBAR;
-        message.obj = text;
-        message.arg1 = 0;
-        EventBus.getDefault().post(message, APPMANAGER_MESSAGE);
-    }
-
-    /**
-     * 用snackbar长时间显示
-     *
-     * @param text
-     */
-    public static void SnackbarTextWithLong(String text) {
-        Message message = new Message();
-        message.what = SHOW_SNACKBAR;
-        message.obj = text;
-        message.arg1 = 1;
-        EventBus.getDefault().post(message, APPMANAGER_MESSAGE);
-    }
-
 
     /**
      * 通过资源id获得drawable
@@ -253,30 +218,6 @@ public class UiUtils {
         activity.startActivity(intent);
     }
 
-    /**
-     * 跳转界面3
-     *
-     * @param
-     * @param homeActivityClass
-     */
-    public static void startActivity(Class homeActivityClass) {
-        Message message = new Message();
-        message.what = START_ACTIVITY;
-        message.obj = homeActivityClass;
-        EventBus.getDefault().post(message, APPMANAGER_MESSAGE);
-    }
-
-    /**
-     * 跳转界面3
-     *
-     * @param
-     */
-    public static void startActivity(Intent content) {
-        Message message = new Message();
-        message.what = START_ACTIVITY;
-        message.obj = content;
-        EventBus.getDefault().post(message, APPMANAGER_MESSAGE);
-    }
 
     /**
      * 跳转界面4
@@ -399,17 +340,5 @@ public class UiUtils {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-
-    public static void killAll(){
-        Message message = new Message();
-        message.what = KILL_ALL;
-        EventBus.getDefault().post(message, APPMANAGER_MESSAGE);
-    }
-
-    public static void exitApp(){
-        Message message = new Message();
-        message.what = APP_EXIT;
-        EventBus.getDefault().post(message, APPMANAGER_MESSAGE);
-    }
 
 }

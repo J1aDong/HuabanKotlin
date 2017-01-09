@@ -5,11 +5,11 @@ import android.Manifest;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.mvp.BaseView;
+import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
+import com.jess.arms.rx.rxerrorhandler.handler.ErrorHandleSubscriber;
 import com.tbruyelle.rxpermissions.RxPermissions;
 import com.trello.rxlifecycle.LifecycleTransformer;
 
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
-import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
 import timber.log.Timber;
 
 /**

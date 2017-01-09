@@ -25,6 +25,9 @@ import org.jetbrains.anko.*
  */
 
 class ExploreFragment : WEFragment<ExploreFragmentPresenter>(), ExploreFragmentContract.View {
+    override fun showMessage(message: String?) {
+
+    }
 
     override fun setupFragmentComponent(appComponent: AppComponent) {
         InjectionHeader.inject(appComponent, this)
@@ -64,15 +67,6 @@ class ExploreFragment : WEFragment<ExploreFragmentPresenter>(), ExploreFragmentC
 
     }
 
-    override fun showMessage(message: String) {
-        checkNotNull(message)
-        UiUtils.SnackbarText(message)
-    }
-
-    override fun launchActivity(intent: Intent) {
-        checkNotNull(intent)
-        UiUtils.startActivity(intent)
-    }
 
     override fun killMyself() {
 

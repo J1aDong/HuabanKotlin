@@ -7,17 +7,16 @@ import com.j1adong.huabankotlin.di.module.CacheModule;
 import com.j1adong.huabankotlin.di.module.ServiceModule;
 import com.j1adong.huabankotlin.mvp.model.cache.CacheManager;
 import com.j1adong.huabankotlin.mvp.model.service.ServiceManager;
-import com.jess.arms.base.AppManager;
 import com.jess.arms.di.module.AppModule;
 import com.jess.arms.di.module.ClientModule;
 import com.jess.arms.di.module.GlobeConfigModule;
 import com.jess.arms.di.module.ImageModule;
+import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
 import com.jess.arms.widget.imageloader.ImageLoader;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 import okhttp3.OkHttpClient;
 
 /**
@@ -48,6 +47,4 @@ public interface AppComponent
 	// gson
 	Gson gson();
 
-	// 用于管理所有activity
-	AppManager appManager();
 }

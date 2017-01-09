@@ -1,9 +1,8 @@
 package com.j1adong.huabankotlin.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import com.j1adong.huabankotlin.AutoLayout
+import com.j1adong.huabankotlin.common.AutoLayout
 import com.j1adong.huabankotlin.R
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEActivity
@@ -30,9 +29,7 @@ class MainActivity : WEActivity<HomePresenter>(), HomeActivityContract.View {
     }
 
     override fun showMessage(message: String?) {
-    }
 
-    override fun launchActivity(intent: Intent?) {
     }
 
     override fun killMyself() {

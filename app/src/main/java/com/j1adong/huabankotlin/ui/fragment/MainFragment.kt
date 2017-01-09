@@ -5,7 +5,7 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
 import com.ashokvarma.bottomnavigation.BottomNavigationItem
-import com.j1adong.huabankotlin.AutoLayout
+import com.j1adong.huabankotlin.common.AutoLayout
 import com.j1adong.huabankotlin.R
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
@@ -105,13 +105,6 @@ class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.V
     }
 
     override fun showMessage(message: String) {
-        checkNotNull(message)
-        UiUtils.SnackbarText(message)
-    }
-
-    override fun launchActivity(intent: Intent) {
-        checkNotNull(intent)
-        UiUtils.startActivity(intent)
     }
 
     override fun killMyself() {
@@ -131,9 +124,6 @@ class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.V
         override fun createView(ui: AnkoContext<MainFragment>) = with(ui) {
             verticalLayout {
                 id = ID_ROOT
-                kikkatStatusView {
-                    backgroundColor = R.color.grey
-                }
 
                 customViewPager {
                     id = ID_VIEWPAGER

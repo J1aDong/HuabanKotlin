@@ -3,15 +3,12 @@ package com.j1adong.huabankotlin.mvp.presenter;
 import android.app.Application;
 
 import com.j1adong.huabankotlin.mvp.contract.ExploreFragmentContract;
-import com.jess.arms.base.AppManager;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
 import com.jess.arms.widget.imageloader.ImageLoader;
 
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
-
 import javax.inject.Inject;
-
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -22,36 +19,36 @@ import javax.inject.Inject;
  * 如果想生成Fragment的相关文件,则将上面构建顺序中的Activity换为Fragment,并将Component中inject方法的参数改为此Fragment
  */
 
-
 /**
  * Created by J1aDong on 2017/1/7.
  */
 
 @ActivityScope
-public class ExploreFragmentPresenter extends BasePresenter<ExploreFragmentContract.Model, ExploreFragmentContract.View> {
-    private RxErrorHandler mErrorHandler;
-    private Application mApplication;
-    private ImageLoader mImageLoader;
-    private AppManager mAppManager;
+public class ExploreFragmentPresenter extends
+		BasePresenter<ExploreFragmentContract.Model, ExploreFragmentContract.View>
+{
+	private RxErrorHandler mErrorHandler;
+	private Application mApplication;
+	private ImageLoader mImageLoader;
 
-    @Inject
-    public ExploreFragmentPresenter(ExploreFragmentContract.Model model, ExploreFragmentContract.View rootView
-            , RxErrorHandler handler, Application application
-            , ImageLoader imageLoader, AppManager appManager) {
-        super(model, rootView);
-        this.mErrorHandler = handler;
-        this.mApplication = application;
-        this.mImageLoader = imageLoader;
-        this.mAppManager = appManager;
-    }
+	@Inject
+	public ExploreFragmentPresenter(ExploreFragmentContract.Model model,
+			ExploreFragmentContract.View rootView, RxErrorHandler handler,
+			Application application, ImageLoader imageLoader)
+	{
+		super(model, rootView);
+		this.mErrorHandler = handler;
+		this.mApplication = application;
+		this.mImageLoader = imageLoader;
+	}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.mErrorHandler = null;
-        this.mAppManager = null;
-        this.mImageLoader = null;
-        this.mApplication = null;
-    }
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		this.mErrorHandler = null;
+		this.mImageLoader = null;
+		this.mApplication = null;
+	}
 
 }

@@ -4,12 +4,19 @@ import android.app.Application;
 
 import com.google.gson.Gson;
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract;
+import com.j1adong.huabankotlin.mvp.entity.HbData;
 import com.j1adong.huabankotlin.mvp.model.cache.CacheManager;
 import com.j1adong.huabankotlin.mvp.model.service.ServiceManager;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BaseModel;
 
 import javax.inject.Inject;
+
+import io.rx_cache.DynamicKey;
+import io.rx_cache.EvictDynamicKey;
+import io.rx_cache.Reply;
+import rx.Observable;
+import rx.functions.Func1;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -32,6 +39,7 @@ public class HomeFragmentModel extends BaseModel<ServiceManager, CacheManager>
 {
 	private Gson mGson;
 	private Application mApplication;
+	private int LIMIT = 10;
 
 	@Inject
 	public HomeFragmentModel(ServiceManager serviceManager,
@@ -50,4 +58,20 @@ public class HomeFragmentModel extends BaseModel<ServiceManager, CacheManager>
 		this.mApplication = null;
 	}
 
+	@Override
+	public Observable<HbData> getAll(int limit, boolean update)
+	{
+		Observable<HbData> datas = mServiceManager.getCommonService()
+				.getAll(LIMIT);
+		return mCacheManager.getCommonCache()
+				.getAll(datas, new DynamicKey(limit), new EvictDynamicKey(update))
+				.flatMap(new Func1<Reply<HbData>, Observable<HbData>>()
+				{
+					@Override
+					public Observable<HbData> call(Reply<HbData> stringReply)
+					{
+						return Observable.just(stringReply.getData());
+					}
+				});
+	}
 }
