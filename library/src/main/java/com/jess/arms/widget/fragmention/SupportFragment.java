@@ -86,7 +86,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
             throw new RuntimeException(activity.toString() + "must extends SupportActivity!");
         }
 
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONATTACH, this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONATTACH, null, false);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
 
         initAnim();
 
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONCREATE, this, savedInstanceState);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONCREATE, savedInstanceState, false);
     }
 
     private void processRestoreInstanceState(Bundle savedInstanceState) {
@@ -205,7 +205,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
         outState.putBoolean(Fragmentation.FRAGMENTATION_STATE_SAVE_IS_HIDDEN, isHidden());
         outState.putBoolean(Fragmentation.FRAGMENTATION_STATE_SAVE_IS_INVISIBLE_WHEN_LEAVE, mInvisibleWhenLeave);
 
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSAVEINSTANCESTATE, this, outState);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSAVEINSTANCESTATE, outState, false);
     }
 
     @Override
@@ -230,7 +230,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
             }
         }
 
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONACTIVITYCREATED, this, savedInstanceState);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONACTIVITYCREATED, savedInstanceState, false);
     }
 
     private void notifyNoAnim() {
@@ -274,7 +274,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
             }
         }
 
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONRESUME, this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONRESUME, null, false);
     }
 
     @Override
@@ -293,7 +293,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
             hideSoftInput();
         }
 
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONPAUSE, this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONPAUSE, null, false);
     }
 
     @Override
@@ -379,15 +379,17 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
             if (mIsFirstVisible) {
                 mIsFirstVisible = false;
                 onLazyInitView(mSaveInstanceState);
-                _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONLAZYINITVIEW, this);
+                dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONLAZYINITVIEW, null, false);
             }
 
-            _mActivity.setFragmentClickable(true);
             onSupportVisible();
-            _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSUPPORTVISIBLE, this, true);
+            if (_mActivity != null) {
+                _mActivity.setFragmentClickable(true);
+            }
+            dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSUPPORTVISIBLE, null, true);
         } else {
             onSupportInvisible();
-            _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSUPPORTINVISIBLE, this, false);
+            dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSUPPORTINVISIBLE, null, false);
         }
     }
 
@@ -438,7 +440,7 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
             @Override
             public void run() {
                 onEnterAnimationEnd(savedInstanceState);
-                _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONENTERANIMATIONEND, SupportFragment.this, savedInstanceState);
+                dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONENTERANIMATIONEND, savedInstanceState, false);
             }
         });
     }
@@ -799,19 +801,19 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONVIEWCREATED, SupportFragment.this, savedInstanceState);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONVIEWCREATED, savedInstanceState, false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSTART, SupportFragment.this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSTART, null, false);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSTOP, SupportFragment.this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONSTOP, null, false);
     }
 
     @Override
@@ -824,21 +826,23 @@ public class SupportFragment extends RxFragment implements ISupportFragment {
         }
         mIsFirstVisible = true;
         mFixStatePagerAdapter = false;
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONDESTROYVIEW, SupportFragment.this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONDESTROYVIEW, null, false);
     }
 
     @Override
     public void onDestroy() {
         mFragmentation.handleResultRecord(this);
         super.onDestroy();
-        _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONDESTROY, SupportFragment.this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONDESTROY, null, false);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (_mActivity != null) {
-            _mActivity.dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONDETACH, SupportFragment.this);
+        dispatchFragmentLifecycle(LifecycleHelper.LIFECYLCE_ONDETACH, null, false);
         }
+    private void dispatchFragmentLifecycle(int lifecycle, Bundle bundle, boolean visible) {
+        if (_mActivity == null) return;
+        _mActivity.dispatchFragmentLifecycle(lifecycle, SupportFragment.this, bundle, visible);
     }
 }

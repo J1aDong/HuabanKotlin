@@ -1,27 +1,27 @@
 package com.j1adong.huabankotlin.ui.fragment
 
-import android.content.Intent
 import android.support.v4.view.ViewPager
 import android.view.View
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
 import com.ashokvarma.bottomnavigation.BottomNavigationItem
-import com.j1adong.huabankotlin.common.AutoLayout
 import com.j1adong.huabankotlin.R
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
+import com.j1adong.huabankotlin.event.EventString
+import com.j1adong.huabankotlin.event.EventConstant
 import com.j1adong.huabankotlin.mvp.contract.MainFragmentContract
 import com.j1adong.huabankotlin.mvp.presenter.MainFragmentPresenter
 import com.j1adong.huabankotlin.ui.bottomNavigationBar
 import com.j1adong.huabankotlin.ui.customViewPager
 import com.j1adong.huabankotlin.ui.fragment.MainFragment.MainFragmentUI.Factory.ID_BOTTOMBAR
 import com.j1adong.huabankotlin.ui.fragment.MainFragment.MainFragmentUI.Factory.ID_VIEWPAGER
-import com.j1adong.huabankotlin.ui.kikkatStatusView
 import com.jess.arms.base.AdapterViewPager
 import com.jess.arms.base.BaseFragment
-import com.jess.arms.utils.UiUtils
-import com.jess.arms.utils.Preconditions.checkNotNull
+import com.jess.arms.utils.EventBus
 import com.jess.arms.widget.CustomViewPager
+import com.socks.library.KLog
+import com.squareup.otto.Subscribe
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.find
 import java.util.*
@@ -40,6 +40,10 @@ import java.util.*
  */
 
 class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.View {
+
+    override fun findViews(mRootView: View) {
+    }
+
     var mViewPager: ViewPager? = null
     var mBottomBar: BottomNavigationBar? = null
     internal val listFragments: MutableList<BaseFragment<*>> = ArrayList()
@@ -53,14 +57,41 @@ class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.V
         return view
     }
 
+    private var homeFragment: HomeFragment? = null
+    private var exploreFragment: ExploreFragment? = null
+    private var newsFragment: NewsFragment? = null
+    private var mineFragment: MineFragment? = null
+
+    var isShow: Boolean = true
+
+    @Subscribe
+    fun receiveEvent(event: EventString) {
+        if (event.tag == EventConstant.HIDE_TOOLBAR) {
+            if (isShow) {
+                mBottomBar?.hide(true)
+                isShow = false
+            }
+        } else if (event.tag == EventConstant.SHOW_TOOLBAR) {
+            if (!isShow) {
+                mBottomBar?.show(true)
+                isShow = true
+            }
+        }
+    }
+
     override fun initData() {
         mViewPager = find<CustomViewPager>(id = ID_VIEWPAGER)
         mBottomBar = find<BottomNavigationBar>(id = ID_BOTTOMBAR)
 
-        listFragments.add(HomeFragment.newInstance())
-        listFragments.add(ExploreFragment.newInstance())
-        listFragments.add(HomeFragment.newInstance())
-        listFragments.add(HomeFragment.newInstance())
+        homeFragment = HomeFragment.newInstance()
+        exploreFragment = ExploreFragment.newInstance()
+        newsFragment = NewsFragment.newInstance()
+        mineFragment = MineFragment.newInstance()
+
+        listFragments.add(homeFragment as HomeFragment)
+        listFragments.add(exploreFragment as ExploreFragment)
+        listFragments.add(newsFragment as NewsFragment)
+        listFragments.add(mineFragment as MineFragment)
 
         val adapter = AdapterViewPager(activity?.supportFragmentManager)
         adapter.bindData(listFragments)
@@ -68,6 +99,11 @@ class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.V
 
         mBottomBar?.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabReselected(position: Int) {
+                KLog.w(position)
+                if (position == 0) {
+//                    homeFragment?.refresh()
+                    EventBus.getDefault().post(EventString(EventConstant.REFRESH_ALL_EVENT))
+                }
             }
 
             override fun onTabUnselected(position: Int) {
@@ -122,12 +158,12 @@ class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.V
     //布局文件
     class MainFragmentUI : AnkoComponent<MainFragment> {
         override fun createView(ui: AnkoContext<MainFragment>) = with(ui) {
-            verticalLayout {
+            relativeLayout {
                 id = ID_ROOT
 
                 customViewPager {
                     id = ID_VIEWPAGER
-                }.lparams(width = matchParent, height = 0, weight = 1f) {
+                }.lparams(width = matchParent, height = matchParent) {
 
                 }
 
@@ -142,6 +178,7 @@ class MainFragment : WEFragment<MainFragmentPresenter>(), MainFragmentContract.V
                     initialise()
                 }.lparams(width = matchParent, height = wrapContent) {
                     bottomMargin = -30
+                    alignParentBottom()
                 }
             }
         }

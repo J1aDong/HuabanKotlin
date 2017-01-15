@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import org.simple.eventbus.EventBus;
+import com.jess.arms.utils.EventBus;
 
 import rx.Subscription;
 

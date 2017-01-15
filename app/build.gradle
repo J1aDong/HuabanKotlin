@@ -54,6 +54,9 @@ dependencies {
     // In case you need support-v4 bindings
     compile 'org.jetbrains.anko:anko-appcompat-v7:0.9'
     compile "org.jetbrains.anko:anko-recyclerview-v7:0.9"
+
+    compile 'jp.wasabeef:recyclerview-animators:2.2.5'
+
     // For appcompat-v7 bindings
     compile project(':library')
 
@@ -61,7 +64,6 @@ dependencies {
     apt rootProject.ext.dependencies["butterknife-apt"]
 
     compile rootProject.ext.dependencies["bottom-navigation"]
-    compile rootProject.ext.dependencies["multitype"]
 
     apt rootProject.ext.dependencies["dagger2-apt-compiler"]
     provided rootProject.ext.dependencies["javax.annotation"]
@@ -69,6 +71,7 @@ dependencies {
     debugCompile rootProject.ext.dependencies["canary-debug"]
     releaseCompile rootProject.ext.dependencies["canary-release"]
     testCompile rootProject.ext.dependencies["canary-release"]
+
 }
 repositories {
     mavenCentral()

@@ -1,6 +1,8 @@
 package com.j1adong.huabankotlin.common;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.j1adong.huabankotlin.BuildConfig;
+import com.j1adong.huabankotlin.R;
 import com.j1adong.huabankotlin.di.component.AppComponent;
 import com.j1adong.huabankotlin.di.component.DaggerAppComponent;
 import com.j1adong.huabankotlin.di.module.CacheModule;
@@ -44,7 +46,14 @@ public class WEApplication extends BaseApplication
 			Timber.plant(new Timber.DebugTree());
 		}
 
+		initialFresco();
+
 		installLeakCanary();// leakCanary内存泄露检查
+	}
+
+	private void initialFresco()
+	{
+		Fresco.initialize(this);
 	}
 
 	/**
@@ -95,7 +104,8 @@ public class WEApplication extends BaseApplication
 	protected GlobeConfigModule getGlobeConfigModule()
 	{
 		return GlobeConfigModule.buidler().baseurl(Api.APP_BASE_URL)
-				.globeHttpHandler(new GlobeHttpHandler()
+				.setSSL(new int[]
+				{ R.raw.huabanssl }).globeHttpHandler(new GlobeHttpHandler()
 				{// 这里可以提供一个全局处理http响应结果的处理类,
 					// 这里可以比客户端提前一步拿到服务器返回的结果,可以做一些操作,比如token超时,重新获取
 					@Override

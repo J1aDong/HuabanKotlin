@@ -1,16 +1,18 @@
 package com.j1adong.huabankotlin.ui.fragment
 
-import com.jess.arms.utils.Preconditions.checkNotNull
+import android.content.Intent
+import android.view.View
 
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
-import com.j1adong.huabankotlin.di.module.NewsFragmentModule
-import com.j1adong.huabankotlin.mvp.contract.NewsFragmentContract
-import com.j1adong.huabankotlin.mvp.presenter.NewsFragmentPresenter
-import android.view.LayoutInflater
-import android.view.View
+import com.j1adong.huabankotlin.mvp.contract.MineFragmentContract
+import com.j1adong.huabankotlin.mvp.presenter.MineFragmentPresenter
+import com.jess.arms.utils.UiUtils
+
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.event.EventString
+
+import com.jess.arms.utils.Preconditions.checkNotNull
 import org.jetbrains.anko.*
 
 /**
@@ -23,20 +25,20 @@ import org.jetbrains.anko.*
  */
 
 /**
- * Created by J1aDong on 2017/1/9.
+ * Created by J1aDong on 2017/1/10.
  */
 
-class NewsFragment : WEFragment<NewsFragmentPresenter>(), NewsFragmentContract.View {
+class MineFragment : WEFragment<MineFragmentPresenter>(), MineFragmentContract.View {
 
     override fun findViews(mRootView: View) {
     }
 
     override fun setupFragmentComponent(appComponent: AppComponent) {
-        InjectionHeader.inject(appComponent, this)
+        InjectionHeader.inject(appComponent,this)
     }
 
-    override fun initView(): View? {
-        val view = NewsFragmentUI().createView(AnkoContext.Companion.create(context, this))
+    override fun initView(): View {
+        val view = MineFragmentUI().createView(AnkoContext.Companion.create(context,this))
         return view
     }
 
@@ -71,7 +73,9 @@ class NewsFragment : WEFragment<NewsFragmentPresenter>(), NewsFragmentContract.V
     }
 
     override fun showMessage(message: String) {
-        checkNotNull(message)
+    }
+
+    fun launchActivity(intent: Intent) {
     }
 
     override fun killMyself() {
@@ -79,17 +83,17 @@ class NewsFragment : WEFragment<NewsFragmentPresenter>(), NewsFragmentContract.V
     }
 
     companion object {
-        fun newInstance(): NewsFragment {
-            val fragment = NewsFragment()
+        fun newInstance(): MineFragment {
+            val fragment = MineFragment()
             return fragment
         }
     }
 
-    class NewsFragmentUI : AnkoComponent<NewsFragment> {
-        override fun createView(ui: AnkoContext<NewsFragment>) = with(ui) {
+    class MineFragmentUI : AnkoComponent<MineFragment> {
+        override fun createView(ui: AnkoContext<MineFragment>) = with(ui) {
             relativeLayout {
                 textView {
-                    text = "NewsFragment"
+                    text = "MineFragment"
                 }.lparams {
                     centerInParent()
                 }

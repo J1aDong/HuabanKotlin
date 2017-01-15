@@ -1,9 +1,16 @@
 package com.j1adong.huabankotlin.mvp.presenter;
 
-import android.app.Application;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.inject.Inject;
+
+import com.j1adong.huabankotlin.adapter.Footer;
+import com.j1adong.huabankotlin.adapter.FooterViewProvider;
+import com.j1adong.huabankotlin.adapter.PinsViewProvider;
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract;
 import com.j1adong.huabankotlin.mvp.entity.HbData;
+import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
@@ -12,9 +19,10 @@ import com.jess.arms.utils.RxUtils;
 import com.jess.arms.widget.imageloader.ImageLoader;
 import com.socks.library.KLog;
 
-import javax.inject.Inject;
+import android.app.Application;
 
 import me.drakeet.multitype.Items;
+import me.drakeet.multitype.MultiTypeAdapter;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -40,6 +48,10 @@ public class HomeFragmentPresenter extends
 	private Application mApplication;
 	private ImageLoader mImageLoader;
 
+	Items items = new Items();
+	List<PinsEntity> pinsEntityList = new ArrayList<>();
+	MultiTypeAdapter mAdapter;
+
 	@Inject
 	public HomeFragmentPresenter(HomeFragmentContract.Model model,
 			HomeFragmentContract.View rootView, RxErrorHandler handler,
@@ -49,11 +61,33 @@ public class HomeFragmentPresenter extends
 		this.mErrorHandler = handler;
 		this.mApplication = application;
 		this.mImageLoader = imageLoader;
+
+		mAdapter = new MultiTypeAdapter(items);
+		// 注册ViewType类型
+		mAdapter.register(PinsEntity.class, new PinsViewProvider());
+		mAdapter.register(Footer.class, new FooterViewProvider());
+		mRootView.setAdapter(mAdapter);
 	}
 
-	public void requestAll(final Items items)
+	public void requestAll(final boolean pullToRefresh, final boolean loadMore)
 	{
-		mModel.getAll(10, true).subscribeOn(Schedulers.io())
+		// 刷新就清空list数据
+		if( pullToRefresh )
+		{
+			items.removeAll(pinsEntityList);
+			pinsEntityList.clear();
+		}
+
+		if( loadMore )
+		{
+			items.add(new Footer(Footer.LoadMore));
+			mAdapter.notifyItemRangeChanged(pinsEntityList
+					.size(), pinsEntityList.size() + 1);
+		}
+
+		final Integer max = pinsEntityList.size() == 0 ? null
+				: pinsEntityList.get(pinsEntityList.size() - 1).getPin_id();
+		mModel.getAll(20, max, pullToRefresh).subscribeOn(Schedulers.io())
 				.retryWhen(new RetryWithDelay(3, 2))
 				.observeOn(AndroidSchedulers.mainThread())
 				.compose(RxUtils.<HbData> bindToLifecycle(mRootView))
@@ -62,9 +96,41 @@ public class HomeFragmentPresenter extends
 					@Override
 					public void call(HbData hbData)
 					{
-						KLog.w(hbData.toString());
-						items.addAll(hbData.getPins());
-						mRootView.refresh();
+						int oldCount = pinsEntityList.size();
+						mRootView.hideLoading();
+						pinsEntityList.addAll(hbData.getPins());
+						items.addAll(oldCount, hbData.getPins());
+
+						int newCount = pinsEntityList.size();
+
+						if( pullToRefresh )
+						{
+							mAdapter.notifyDataSetChanged();
+						}
+						else if( loadMore )
+						{
+							items.remove(items.size() - 1);
+							mAdapter.notifyItemRangeChanged(oldCount, newCount
+									- oldCount);
+						}
+						else
+						{
+							mAdapter.notifyItemRangeInserted(oldCount, newCount
+									- oldCount);
+						}
+					}
+				}, new Action1<Throwable>()
+				{
+					@Override
+					public void call(Throwable throwable)
+					{
+						mRootView.hideLoading();
+						if( loadMore )
+						{
+							items.remove(items.size() - 1);
+							mAdapter.notifyDataSetChanged();
+						}
+						throwable.printStackTrace();
 					}
 				});
 	}

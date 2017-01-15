@@ -1,14 +1,12 @@
 package com.j1adong.huabankotlin.ui.fragment
 
-import android.content.Intent
 import android.view.View
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
+import com.j1adong.huabankotlin.event.EventString
 import com.j1adong.huabankotlin.mvp.contract.ExploreFragmentContract
 import com.j1adong.huabankotlin.mvp.presenter.ExploreFragmentPresenter
-import com.jess.arms.utils.Preconditions.checkNotNull
-import com.jess.arms.utils.UiUtils
 import org.jetbrains.anko.*
 
 /**
@@ -25,6 +23,10 @@ import org.jetbrains.anko.*
  */
 
 class ExploreFragment : WEFragment<ExploreFragmentPresenter>(), ExploreFragmentContract.View {
+
+    override fun findViews(mRootView: View) {
+    }
+
     override fun showMessage(message: String?) {
 
     }

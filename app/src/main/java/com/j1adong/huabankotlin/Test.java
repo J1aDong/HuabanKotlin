@@ -1,6 +1,9 @@
 package com.j1adong.huabankotlin;
 
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
+import android.support.v7.widget.RecyclerView;
+
+import com.socks.library.KLog;
+
 
 /**
  * Created by J1aDong on 2017/1/9.
@@ -8,10 +11,11 @@ import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 
 public class Test
 {
+	RecyclerView rv;
 
 	public Test()
 	{
-
-		PinsEntity.class.getClass();
+		KLog.w("刷新");
 	}
+
 }

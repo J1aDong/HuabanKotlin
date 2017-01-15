@@ -7,10 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.utils.EventBus;
 import com.jess.arms.widget.fragmention.SupportFragment;
 import com.zhy.autolayout.utils.AutoUtils;
-
-import org.simple.eventbus.EventBus;
 
 import javax.inject.Inject;
 
@@ -32,9 +31,11 @@ public abstract class BaseFragment<P extends BasePresenter>
 			Bundle savedInstanceState)
 	{
 		mRootView = initView();
-		// 绑定到butterknife
+		findViews(mRootView);
 		return mRootView;
 	}
+
+	protected abstract void findViews(View mRootView);
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
@@ -58,12 +59,6 @@ public abstract class BaseFragment<P extends BasePresenter>
 	 * 依赖注入的入口
 	 */
 	protected abstract void ComponentInject();
-
-	@Override
-	public void onDestroyView()
-	{
-		super.onDestroyView();
-	}
 
 	@Override
 	public void onDestroy()

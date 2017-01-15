@@ -5,16 +5,19 @@ import com.j1adong.huabankotlin.di.component.DaggerExploreFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerHomeComponent;
 import com.j1adong.huabankotlin.di.component.DaggerHomeFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerMainFragmentComponent;
+import com.j1adong.huabankotlin.di.component.DaggerMineFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerNewsFragmentComponent;
 import com.j1adong.huabankotlin.di.module.ExploreFragmentModule;
 import com.j1adong.huabankotlin.di.module.HomeFragmentModule;
 import com.j1adong.huabankotlin.di.module.HomeModule;
 import com.j1adong.huabankotlin.di.module.MainFragmentModule;
+import com.j1adong.huabankotlin.di.module.MineFragmentModule;
 import com.j1adong.huabankotlin.di.module.NewsFragmentModule;
 import com.j1adong.huabankotlin.ui.activity.MainActivity;
 import com.j1adong.huabankotlin.ui.fragment.ExploreFragment;
 import com.j1adong.huabankotlin.ui.fragment.HomeFragment;
 import com.j1adong.huabankotlin.ui.fragment.MainFragment;
+import com.j1adong.huabankotlin.ui.fragment.MineFragment;
 import com.j1adong.huabankotlin.ui.fragment.NewsFragment;
 
 /**
@@ -46,7 +49,7 @@ public class InjectionHeader
 			ExploreFragment exploreFragment)
 	{
 		DaggerExploreFragmentComponent.builder().appComponent(appComponent)
-				.exploreFragmentModule(new ExploreFragmentModule(exploreFragment))// 请将ExploreFragmentModule()第一个首字母改为小写
+				.exploreFragmentModule(new ExploreFragmentModule(exploreFragment))
 				.build().inject(exploreFragment);
 	}
 
@@ -54,7 +57,7 @@ public class InjectionHeader
 			MainFragment mainFragment)
 	{
 		DaggerMainFragmentComponent.builder().appComponent(appComponent)
-				.mainFragmentModule(new MainFragmentModule(mainFragment))// 请将MainFragmentModule()第一个首字母改为小写
+				.mainFragmentModule(new MainFragmentModule(mainFragment))
 				.build().inject(mainFragment);
 	}
 
@@ -64,5 +67,13 @@ public class InjectionHeader
 		DaggerNewsFragmentComponent.builder().appComponent(appComponent)
 				.newsFragmentModule(new NewsFragmentModule(newsFragment))// 请将NewsFragmentModule()第一个首字母改为小写
 				.build().inject(newsFragment);
+	}
+
+	public static void inject(AppComponent appComponent,
+			MineFragment mineFragment)
+	{
+		DaggerMineFragmentComponent.builder().appComponent(appComponent)
+				.mineFragmentModule(new MineFragmentModule(mineFragment))// 请将MineFragmentModule()第一个首字母改为小写
+				.build().inject(mineFragment);
 	}
 }

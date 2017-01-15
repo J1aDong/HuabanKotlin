@@ -35,4 +35,5 @@ public abstract class WEFragment<P extends BasePresenter>
 		}
 		this.mWeApplication = null;
 	}
+
 }

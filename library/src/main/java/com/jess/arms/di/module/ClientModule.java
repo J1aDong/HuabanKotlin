@@ -1,16 +1,22 @@
 package com.jess.arms.di.module;
 
-import android.app.Application;
-
-import com.jess.arms.http.RequestIntercept;
-import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
-import com.jess.arms.rx.rxerrorhandler.handler.listener.ResponseErroListener;
-
 import java.io.File;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
+
+import com.jess.arms.http.RequestIntercept;
+import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
+import com.jess.arms.rx.rxerrorhandler.handler.listener.ResponseErroListener;
+import com.jess.arms.utils.MyTrustManager;
+
+import android.app.Application;
 
 import dagger.Module;
 import dagger.Provides;
@@ -20,6 +26,7 @@ import okhttp3.Cache;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -70,12 +77,34 @@ public class ClientModule
 	@Singleton
 	@Provides
 	OkHttpClient provideClient(OkHttpClient.Builder okHttpClient, Cache cache,
-			Interceptor intercept, List<Interceptor> interceptors)
+			Interceptor intercept, List<Interceptor> interceptors,
+			Application application, int[] certificates)
 	{
+		HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+		httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 		OkHttpClient.Builder builder = okHttpClient
 				.connectTimeout(TIME_OUT, TimeUnit.SECONDS)
 				.readTimeout(TIME_OUT, TimeUnit.SECONDS).cache(cache)// 设置缓存
+				.addInterceptor(httpLoggingInterceptor)
 				.addNetworkInterceptor(intercept);
+		if( null != certificates )
+		{
+			try
+			{
+				try
+				{
+					builder.sslSocketFactory(MyTrustManager
+							.getSSLSocketFactory_Certificate(application, "BKS", certificates[0]));
+				} catch( CertificateException | KeyStoreException
+						| NoSuchAlgorithmException | KeyManagementException e )
+				{
+					e.printStackTrace();
+				}
+			} catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+		}
 		if( interceptors != null && interceptors.size() > 0 )
 		{// 如果外部提供了interceptor的数组则遍历添加
 			for( Interceptor interceptor : interceptors )
@@ -141,32 +170,4 @@ public class ClientModule
 		return RxErrorHandler.builder().with(application)
 				.responseErroListener(listener).build();
 	}
-
-	// .addNetworkInterceptor(new Interceptor() {
-	// @Override
-	// public Response intercept(Interceptor.Chain chain) throws IOException {
-	// Request request = chain.request();
-	// if(!DeviceUtils.netIsConnected(UiUtils.getContext())){
-	// request = request.newBuilder()
-	// .cacheControl(CacheControl.FORCE_CACHE)
-	// .build();
-	// LogUtils.warnInfo("http","no network");
-	// }
-	// Response originalResponse = chain.proceed(request);
-	// if(DeviceUtils.netIsConnected(UiUtils.getContext())){
-	// //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
-	// String cacheControl = request.cacheControl().toString();
-	// return originalResponse.newBuilder()
-	// .header("Cache-Control", cacheControl)
-	// .removeHeader("Pragma")
-	// .build();
-	// }else{
-	// return originalResponse.newBuilder()
-	// .header("Cache-Control", "public, only-if-cached, max-stale=2419200")
-	// .removeHeader("Pragma")
-	// .build();
-	// }
-	// }
-	// })
-
 }

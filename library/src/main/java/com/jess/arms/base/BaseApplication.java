@@ -34,7 +34,6 @@ public abstract class BaseApplication extends Application
 		this.mImagerModule = new ImageModule();// 图片加载框架默认使用glide
 		this.mClientModule = new ClientModule();// 用于提供okhttp和retrofit的单例
 		this.mGlobeConfigModule = checkNotNull(getGlobeConfigModule(), "lobeConfigModule is required");
-
 	}
 
 	/**

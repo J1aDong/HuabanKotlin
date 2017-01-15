@@ -24,123 +24,147 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  * Created by jessyan on 2016/3/14.
  */
 @Module
-public class GlobeConfigModule {
-    private HttpUrl mApiUrl;
-    private GlobeHttpHandler mHandler;
-    private List<Interceptor> mInterceptors;
-    private ResponseErroListener mErroListener;
-    private File mCacheFile;
+public class GlobeConfigModule
+{
+	private HttpUrl mApiUrl;
+	private GlobeHttpHandler mHandler;
+	private List<Interceptor> mInterceptors;
+	private ResponseErroListener mErroListener;
+	private File mCacheFile;
+	private int[] mCertificates;
 
-    /**
-     * @author: jess
-     * @date 8/5/16 11:03 AM
-     * @description: 设置baseurl
-     */
-    private GlobeConfigModule(Buidler buidler) {
-        this.mApiUrl = buidler.apiUrl;
-        this.mHandler = buidler.handler;
-        this.mInterceptors = buidler.interceptors;
-        this.mErroListener = buidler.responseErroListener;
-        this.mCacheFile = buidler.cacheFile;
-    }
+	/**
+	 * @author: jess
+	 * @date 8/5/16 11:03 AM
+	 * @description: 设置baseurl
+	 */
+	private GlobeConfigModule(Buidler buidler)
+	{
+		this.mApiUrl = buidler.apiUrl;
+		this.mHandler = buidler.handler;
+		this.mInterceptors = buidler.interceptors;
+		this.mErroListener = buidler.responseErroListener;
+		this.mCacheFile = buidler.cacheFile;
+		this.mCertificates = buidler.certificates;
+	}
 
-    public static Buidler buidler() {
-        return new Buidler();
-    }
+	public static Buidler buidler()
+	{
+		return new Buidler();
+	}
 
+	@Singleton
+	@Provides
+	List<Interceptor> provideInterceptors()
+	{
+		return mInterceptors;
+	}
 
-    @Singleton
-    @Provides
-    List<Interceptor> provideInterceptors() {
-        return mInterceptors;
-    }
+	@Singleton
+	@Provides
+	HttpUrl provideBaseUrl()
+	{
+		return mApiUrl;
+	}
 
+	@Singleton
+	@Provides
+	int[] provideCertificates()
+	{
+		return mCertificates;
+	}
 
-    @Singleton
-    @Provides
-    HttpUrl provideBaseUrl() {
-        return mApiUrl;
-    }
+	@Singleton
+	@Provides
+	GlobeHttpHandler provideGlobeHttpHandler()
+	{
+		return mHandler == null ? GlobeHttpHandler.EMPTY : mHandler;// 打印请求信息
+	}
 
+	/**
+	 * 提供缓存地址
+	 */
 
-    @Singleton
-    @Provides
-    GlobeHttpHandler provideGlobeHttpHandler() {
-        return mHandler == null ? GlobeHttpHandler.EMPTY : mHandler;//打印请求信息
-    }
+	@Singleton
+	@Provides
+	File provideCacheFile(Application application)
+	{
+		return mCacheFile == null ? DataHelper.getCacheFile(application)
+				: mCacheFile;
+	}
 
+	/**
+	 * 提供处理Rxjava错误的管理器的回调
+	 *
+	 * @return
+	 */
+	@Singleton
+	@Provides
+	ResponseErroListener provideResponseErroListener()
+	{
+		return mErroListener == null ? ResponseErroListener.EMPTY
+				: mErroListener;
+	}
 
-    /**
-     * 提供缓存地址
-     */
+	public static final class Buidler
+	{
+		private HttpUrl apiUrl = HttpUrl.parse("https://api.github.com/");
+		private GlobeHttpHandler handler;
+		private List<Interceptor> interceptors = new ArrayList<>();
+		private ResponseErroListener responseErroListener;
+		private File cacheFile;
+		public int[] certificates;
 
-    @Singleton
-    @Provides
-    File provideCacheFile(Application application) {
-        return mCacheFile == null ? DataHelper.getCacheFile(application) : mCacheFile;
-    }
+		private Buidler()
+		{
+		}
 
+		public Buidler baseurl(String baseurl)
+		{// 基础url
+			if( TextUtils.isEmpty(baseurl) )
+			{
+				throw new IllegalArgumentException("baseurl can not be empty");
+			}
+			this.apiUrl = HttpUrl.parse(baseurl);
+			return this;
+		}
 
-    /**
-     * 提供处理Rxjava错误的管理器的回调
-     *
-     * @return
-     */
-    @Singleton
-    @Provides
-    ResponseErroListener provideResponseErroListener() {
-        return mErroListener == null ? ResponseErroListener.EMPTY : mErroListener;
-    }
+		public Buidler globeHttpHandler(GlobeHttpHandler handler)
+		{// 用来处理http响应结果
+			this.handler = handler;
+			return this;
+		}
 
+		public Buidler addInterceptor(Interceptor interceptor)
+		{// 动态添加任意个interceptor
+			this.interceptors.add(interceptor);
+			return this;
+		}
 
-    public static final class Buidler {
-        private HttpUrl apiUrl = HttpUrl.parse("https://api.github.com/");
-        private GlobeHttpHandler handler;
-        private List<Interceptor> interceptors = new ArrayList<>();
-        private ResponseErroListener responseErroListener;
-        private File cacheFile;
+		public Buidler responseErroListener(ResponseErroListener listener)
+		{// 处理所有Rxjava的onError逻辑
+			this.responseErroListener = listener;
+			return this;
+		}
 
-        private Buidler() {
-        }
+		public Buidler cacheFile(File cacheFile)
+		{
+			this.cacheFile = cacheFile;
+			return this;
+		}
 
-        public Buidler baseurl(String baseurl) {//基础url
-            if (TextUtils.isEmpty(baseurl)) {
-                throw new IllegalArgumentException("baseurl can not be empty");
-            }
-            this.apiUrl = HttpUrl.parse(baseurl);
-            return this;
-        }
+		public Buidler setSSL(int[] certificates)
+		{
+			this.certificates = certificates;
+			return this;
+		}
 
-        public Buidler globeHttpHandler(GlobeHttpHandler handler) {//用来处理http响应结果
-            this.handler = handler;
-            return this;
-        }
+		public GlobeConfigModule build()
+		{
+			checkNotNull(apiUrl, "baseurl is required");
+			return new GlobeConfigModule(this);
+		}
 
-        public Buidler addInterceptor(Interceptor interceptor) {//动态添加任意个interceptor
-            this.interceptors.add(interceptor);
-            return this;
-        }
-
-
-        public Buidler responseErroListener(ResponseErroListener listener) {//处理所有Rxjava的onError逻辑
-            this.responseErroListener = listener;
-            return this;
-        }
-
-
-        public Buidler cacheFile(File cacheFile) {
-            this.cacheFile = cacheFile;
-            return this;
-        }
-
-
-        public GlobeConfigModule build() {
-            checkNotNull(apiUrl, "baseurl is required");
-            return new GlobeConfigModule(this);
-        }
-
-
-    }
-
+	}
 
 }

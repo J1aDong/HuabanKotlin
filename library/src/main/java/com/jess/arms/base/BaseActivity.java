@@ -9,14 +9,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.utils.EventBus;
 import com.jess.arms.widget.fragmention.SupportActivity;
 import com.jess.arms.widget.fragmention.SupportFragment;
 import com.jess.arms.widget.fragmention.helper.FragmentLifecycleCallbacks;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
-
-import org.simple.eventbus.EventBus;
 
 import javax.inject.Inject;
 
@@ -56,18 +55,6 @@ public abstract class BaseActivity<P extends BasePresenter>
 			return view;
 
 		return super.onCreateView(name, context, attrs);
-	}
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
 	}
 
 	@Nullable

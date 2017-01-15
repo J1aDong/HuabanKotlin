@@ -363,18 +363,6 @@ public class SupportActivity extends RxAppCompatActivity implements ISupport {
         mFragmentation.logFragmentRecords(TAG);
     }
 
-    void dispatchFragmentLifecycle(int lifecycle, SupportFragment fragment) {
-        dispatchFragmentLifecycle(lifecycle, fragment, null);
-    }
-
-    void dispatchFragmentLifecycle(int lifecycle, SupportFragment fragment, Bundle bundle) {
-        dispatchFragmentLifecycle(lifecycle, fragment, bundle, false);
-    }
-
-    void dispatchFragmentLifecycle(int lifecycle, SupportFragment fragment, boolean visible) {
-        dispatchFragmentLifecycle(lifecycle, fragment, null, visible);
-    }
-
     void dispatchFragmentLifecycle(int lifecycle, SupportFragment fragment, Bundle bundle, boolean visible) {
         if (mLifecycleHelper != null) {
             mLifecycleHelper.dispatchLifecycle(lifecycle, fragment, bundle, visible);

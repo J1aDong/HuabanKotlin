@@ -1,6 +1,6 @@
 package com.jess.arms.mvp;
 
-import org.simple.eventbus.EventBus;
+import com.jess.arms.utils.EventBus;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;

@@ -14,5 +14,6 @@ public interface CommonService
 {
 
 	@GET("all")
-	Observable<HbData> getAll(@Query("limit") Integer limit);
+	Observable<HbData> getAll(@Query("limit") Integer limit,
+			@Query("max") Integer max);
 }

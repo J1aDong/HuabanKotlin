@@ -229,7 +229,7 @@ public class Fragmentation {
             List<Fragment> fragmentList = fragmentManager.getFragments();
             if (fragmentList != null) {
                 for (Fragment fragment : fragmentList) {
-                    if (fragment != showFragment) {
+                    if (fragment != null && fragment != showFragment) {
                         ft.hide(fragment);
                     }
                 }
@@ -599,7 +599,7 @@ public class Fragmentation {
             preFragment = getPreFragment(fromFragment);
             if (preFragment != null && preFragment != targetFragment) {
                 View preView = preFragment.getView();
-                if (preView != null && preView instanceof ViewGroup) {
+                if (preView instanceof ViewGroup) {
                     preViewGroup = (ViewGroup) preView;
                 }
             }

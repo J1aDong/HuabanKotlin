@@ -1,23 +1,31 @@
 package com.j1adong.huabankotlin.ui.fragment
 
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.util.Log
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import com.j1adong.huabankotlin.R
-import com.j1adong.huabankotlin.adapter.PinsViewProvider
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
+import com.j1adong.huabankotlin.event.EventConstant
+import com.j1adong.huabankotlin.event.EventString
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity
 import com.j1adong.huabankotlin.mvp.presenter.HomeFragmentPresenter
+import com.jess.arms.utils.EventBus
+import com.jess.arms.utils.UiUtils
 import com.jess.arms.widget.recyclerview.GridSpacingItemDecoration
-import com.jess.arms.widget.recyclerview.SpacesItemDecoration
-import me.drakeet.multitype.Items
+import com.jess.arms.widget.recyclerview.HideScrollListener
+import com.jess.arms.widget.recyclerview.OnLoadMoreListener
+import com.squareup.otto.Subscribe
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import me.drakeet.multitype.MultiTypeAdapter
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.support.v4.swipeRefreshLayout
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -33,13 +41,18 @@ import org.jetbrains.anko.support.v4.find
  */
 
 class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.View {
-    override fun refresh() {
-        mAdapter?.notifyDataSetChanged()
-    }
 
+    private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     private var mRecyclerView: RecyclerView? = null
 
-    private var mAdapter: MultiTypeAdapter? = null
+    override fun findViews(mRootView: View) {
+        mRecyclerView = mRootView.find<RecyclerView>(HomeFragmentUI.ID_RECYCLERVIEW)
+        mSwipeRefreshLayout = mRootView.find<SwipeRefreshLayout>(HomeFragmentUI.ID_SWIPEREFRESHLAYOUT)
+    }
+
+    override fun setAdapter(adapter: MultiTypeAdapter?) {
+        mRecyclerView?.adapter = adapter
+    }
 
     override fun setupFragmentComponent(appComponent: AppComponent) {
         InjectionHeader.inject(appComponent, this)
@@ -50,17 +63,22 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
     }
 
     override fun initData() {
-        val items = Items()
-        mAdapter = MultiTypeAdapter(items)
-        mAdapter?.register(PinsEntity::class.java, PinsViewProvider())
-
-        mRecyclerView = find<RecyclerView>(HomeFragmentUI.ID_RECYCLERVIEW)
         mRecyclerView?.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        val deco = GridSpacingItemDecoration(2, 16, true)
-        mRecyclerView?.adapter = mAdapter
-        mPresenter.requestAll(items)
-
+        val deco = GridSpacingItemDecoration(2, UiUtils.dip2px(5f), true)
         mRecyclerView?.addItemDecoration(deco)
+        mRecyclerView?.itemAnimator = DefaultItemAnimator()
+        mPresenter.requestAll(false, false)
+        mRecyclerView?.setOnScrollListener(object : OnLoadMoreListener() {
+            override fun onBottom() {
+                super.onBottom()
+                mPresenter.requestAll(false, true)
+            }
+        })
+
+        mSwipeRefreshLayout?.setOnRefreshListener {
+            showLoading()
+            mPresenter.requestAll(true, false)
+        }
     }
 
     /**
@@ -80,11 +98,11 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
     }
 
     override fun showLoading() {
-
+        mSwipeRefreshLayout?.isRefreshing = true
     }
 
     override fun hideLoading() {
-
+        mSwipeRefreshLayout?.isRefreshing = false
     }
 
     override fun showMessage(message: String) {
@@ -102,22 +120,45 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
         }
     }
 
+    @Subscribe fun receiveEvent(event: EventString) {
+        Log.w(TAG, "结收到-->" + event.tag)
+        if (event.tag == EventConstant.REFRESH_ALL_EVENT) {
+            mPresenter.requestAll(true, false)
+        }
+    }
+
     class HomeFragmentUI : AnkoComponent<HomeFragment> {
 
         override fun createView(ui: AnkoContext<HomeFragment>) = with(ui) {
             verticalLayout {
-                recyclerView {
-                    id = ID_RECYCLERVIEW
-                    backgroundColor = ui.ctx.resources.getColor(R.color.md_grey_200)
-                    clipToPadding = false
-                    topPadding = 200
-                }.lparams(width = matchParent, height = matchParent) {
-                }
+                swipeRefreshLayout {
+                    id = ID_SWIPEREFRESHLAYOUT
+
+                    setProgressViewEndTarget(true, 300)
+
+                    recyclerView {
+                        id = ID_RECYCLERVIEW
+                        backgroundColor = ui.ctx.resources.getColor(R.color.md_grey_200)
+                        clipToPadding = false
+                        topPadding = 200
+                        addOnScrollListener(object : HideScrollListener() {
+                            override fun hide() {
+                                EventBus.getDefault().post(EventString(EventConstant.HIDE_TOOLBAR))
+                            }
+
+                            override fun show() {
+                                EventBus.getDefault().post(EventString(EventConstant.SHOW_TOOLBAR))
+                            }
+                        })
+                    }.lparams(width = matchParent, height = matchParent) {
+                    }
+                }.lparams(width = matchParent, height = matchParent)
             }
         }
 
         companion object Factory {
-            val ID_RECYCLERVIEW = 1001
+            val ID_RECYCLERVIEW = 2001
+            val ID_SWIPEREFRESHLAYOUT = 2002
         }
     }
 
