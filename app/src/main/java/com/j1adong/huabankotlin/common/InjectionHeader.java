@@ -1,12 +1,14 @@
 package com.j1adong.huabankotlin.common;
 
 import com.j1adong.huabankotlin.di.component.AppComponent;
+import com.j1adong.huabankotlin.di.component.DaggerDetailFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerExploreFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerHomeComponent;
 import com.j1adong.huabankotlin.di.component.DaggerHomeFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerMainFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerMineFragmentComponent;
 import com.j1adong.huabankotlin.di.component.DaggerNewsFragmentComponent;
+import com.j1adong.huabankotlin.di.module.DetailFragmentModule;
 import com.j1adong.huabankotlin.di.module.ExploreFragmentModule;
 import com.j1adong.huabankotlin.di.module.HomeFragmentModule;
 import com.j1adong.huabankotlin.di.module.HomeModule;
@@ -14,6 +16,7 @@ import com.j1adong.huabankotlin.di.module.MainFragmentModule;
 import com.j1adong.huabankotlin.di.module.MineFragmentModule;
 import com.j1adong.huabankotlin.di.module.NewsFragmentModule;
 import com.j1adong.huabankotlin.ui.activity.MainActivity;
+import com.j1adong.huabankotlin.ui.fragment.DetailFragment;
 import com.j1adong.huabankotlin.ui.fragment.ExploreFragment;
 import com.j1adong.huabankotlin.ui.fragment.HomeFragment;
 import com.j1adong.huabankotlin.ui.fragment.MainFragment;
@@ -75,5 +78,13 @@ public class InjectionHeader
 		DaggerMineFragmentComponent.builder().appComponent(appComponent)
 				.mineFragmentModule(new MineFragmentModule(mineFragment))// 请将MineFragmentModule()第一个首字母改为小写
 				.build().inject(mineFragment);
+	}
+
+	public static void inject(AppComponent appComponent,
+			DetailFragment detailFragment)
+	{
+		DaggerDetailFragmentComponent.builder().appComponent(appComponent)
+				.detailFragmentModule(new DetailFragmentModule(detailFragment))
+				.build().inject(detailFragment);
 	}
 }

@@ -2,8 +2,10 @@ package com.j1adong.huabankotlin.adapter;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.j1adong.huabankotlin.R;
+import com.j1adong.huabankotlin.event.EventGotoDetail;
 import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 import com.jess.arms.utils.DeviceUtils;
+import com.jess.arms.utils.EventBus;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import android.support.annotation.NonNull;
@@ -41,8 +43,9 @@ public class PinsViewProvider
 
 	@Override
 	protected void onBindViewHolder(@NonNull final ViewHolder holder,
-			@NonNull PinsEntity pins)
+			@NonNull final PinsEntity pins)
 	{
+		holder.pins = pins;
 		String key = pins.getFile().getKey();
 		final String imgUrl = "http://img.hb.aicdn.com/" + key
 				+ "_/fw/486/gifto/true/progressive/true/format/webp";
@@ -67,7 +70,7 @@ public class PinsViewProvider
 		holder.mTvUserName.setText(userName);
 	}
 
-	static class ViewHolder extends RecyclerView.ViewHolder
+	public static class ViewHolder extends RecyclerView.ViewHolder
 	{
 		@BindView(R.id.img_background)
 		SimpleDraweeView mImgBackground;
@@ -75,12 +78,23 @@ public class PinsViewProvider
 		TextView mTvUserName;
 		@BindView(R.id.img_avatar)
 		SimpleDraweeView mImgAvatar;
+		PinsEntity pins;
 
 		ViewHolder(View itemView)
 		{
 			super(itemView);
 			ButterKnife.bind(this, itemView);
 			AutoUtils.autoSize(itemView);
+
+			mImgBackground.setOnClickListener(new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					EventBus.getDefault()
+							.post(new EventGotoDetail(mImgBackground, pins));
+				}
+			});
 		}
 	}
 }

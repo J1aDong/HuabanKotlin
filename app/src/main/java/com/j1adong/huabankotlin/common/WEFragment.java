@@ -1,6 +1,10 @@
 package com.j1adong.huabankotlin.common;
 
+import android.content.Context;
+
 import com.j1adong.huabankotlin.di.component.AppComponent;
+import com.j1adong.huabankotlin.ui.fragment.HomeFragment;
+import com.j1adong.huabankotlin.ui.fragment.MainFragment;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.mvp.BasePresenter;
 import com.squareup.leakcanary.RefWatcher;

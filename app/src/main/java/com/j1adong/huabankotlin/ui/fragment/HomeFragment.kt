@@ -1,27 +1,32 @@
 package com.j1adong.huabankotlin.ui.fragment
 
+import android.os.Build
+import android.support.v4.view.ViewCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.transition.Fade
 import android.util.Log
 import android.view.View
-import android.view.animation.DecelerateInterpolator
+import com.facebook.drawee.view.SimpleDraweeView
 import com.j1adong.huabankotlin.R
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
 import com.j1adong.huabankotlin.event.EventConstant
+import com.j1adong.huabankotlin.event.EventGotoDetail
 import com.j1adong.huabankotlin.event.EventString
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract
+import com.j1adong.huabankotlin.mvp.entity.PinsEntity
 import com.j1adong.huabankotlin.mvp.presenter.HomeFragmentPresenter
 import com.jess.arms.utils.EventBus
 import com.jess.arms.utils.UiUtils
 import com.jess.arms.widget.recyclerview.GridSpacingItemDecoration
 import com.jess.arms.widget.recyclerview.HideScrollListener
 import com.jess.arms.widget.recyclerview.OnLoadMoreListener
+import com.jess.arms.widget.transition.DetailTransition
 import com.squareup.otto.Subscribe
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import me.drakeet.multitype.MultiTypeAdapter
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -41,6 +46,24 @@ import org.jetbrains.anko.support.v4.swipeRefreshLayout
  */
 
 class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.View {
+
+    @Subscribe fun gotoDetailFragment(event: EventGotoDetail) {
+        val fragment = DetailFragment.newInstance(event.pins)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            exitTransition = Fade()
+            fragment.enterTransition = Fade()
+            fragment.sharedElementReturnTransition = DetailTransition()
+            fragment.sharedElementEnterTransition = DetailTransition()
+
+            ViewCompat.setTransitionName(event.draweeView, getString(R.string.image_transition))
+            // 25.1.0以下的support包,Material过渡动画只有在进栈时有,返回时没有;
+            // 25.1.0+的support包，SharedElement正常
+            fragment.transaction()
+                    .addSharedElement(event.draweeView, getString(R.string.image_transition))
+                    .commit<DetailFragment>()
+        }
+        loadRootFragment(R.id.home_container, fragment)
+    }
 
     private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     private var mRecyclerView: RecyclerView? = null
@@ -130,29 +153,36 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
     class HomeFragmentUI : AnkoComponent<HomeFragment> {
 
         override fun createView(ui: AnkoContext<HomeFragment>) = with(ui) {
-            verticalLayout {
-                swipeRefreshLayout {
-                    id = ID_SWIPEREFRESHLAYOUT
+            frameLayout {
+                verticalLayout {
+                    swipeRefreshLayout {
+                        id = ID_SWIPEREFRESHLAYOUT
 
-                    setProgressViewEndTarget(true, 300)
+                        setProgressViewEndTarget(true, 300)
 
-                    recyclerView {
-                        id = ID_RECYCLERVIEW
-                        backgroundColor = ui.ctx.resources.getColor(R.color.md_grey_200)
-                        clipToPadding = false
-                        topPadding = 200
-                        addOnScrollListener(object : HideScrollListener() {
-                            override fun hide() {
-                                EventBus.getDefault().post(EventString(EventConstant.HIDE_TOOLBAR))
-                            }
+                        recyclerView {
+                            id = ID_RECYCLERVIEW
+                            backgroundColor = ui.ctx.resources.getColor(R.color.md_grey_200)
+                            clipToPadding = false
+                            topPadding = 200
+                            addOnScrollListener(object : HideScrollListener() {
+                                override fun hide() {
+                                    EventBus.getDefault().post(EventString(EventConstant.HIDE_TOOLBAR))
+                                }
 
-                            override fun show() {
-                                EventBus.getDefault().post(EventString(EventConstant.SHOW_TOOLBAR))
-                            }
-                        })
-                    }.lparams(width = matchParent, height = matchParent) {
-                    }
-                }.lparams(width = matchParent, height = matchParent)
+                                override fun show() {
+                                    EventBus.getDefault().post(EventString(EventConstant.SHOW_TOOLBAR))
+                                }
+                            })
+                        }.lparams(width = matchParent, height = matchParent) {
+                        }
+                    }.lparams(width = matchParent, height = matchParent)
+                }
+                frameLayout {
+                    id = R.id.home_container
+                }.lparams(width = matchParent, height = matchParent) {
+
+                }
             }
         }
 

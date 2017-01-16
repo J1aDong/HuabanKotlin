@@ -17,7 +17,6 @@ import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
 import com.jess.arms.rx.rxerrorhandler.handler.RetryWithDelay;
 import com.jess.arms.utils.RxUtils;
 import com.jess.arms.widget.imageloader.ImageLoader;
-import com.socks.library.KLog;
 
 import android.app.Application;
 

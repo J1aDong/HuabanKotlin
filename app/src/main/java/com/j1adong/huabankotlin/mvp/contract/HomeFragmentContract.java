@@ -1,6 +1,8 @@
 package com.j1adong.huabankotlin.mvp.contract;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.j1adong.huabankotlin.mvp.entity.HbData;
+import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 import com.jess.arms.mvp.BaseView;
 import com.jess.arms.mvp.IModel;
 
