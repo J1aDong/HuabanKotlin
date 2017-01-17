@@ -7,6 +7,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.transition.Fade
+import android.transition.TransitionInflater
 import android.util.Log
 import android.view.View
 import com.facebook.drawee.drawable.ScalingUtils
@@ -62,10 +63,14 @@ class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.V
             exitTransition = Fade()
 
             fragment.enterTransition = Fade()
-            fragment.sharedElementReturnTransition = DraweeTransition.createTransitionSet(
-                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.CENTER_CROP)
-            fragment.sharedElementEnterTransition = DraweeTransition.createTransitionSet(
-                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.CENTER_CROP)
+//            fragment.sharedElementReturnTransition = DraweeTransition.createTransitionSet(
+//                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.CENTER_CROP)
+//            fragment.sharedElementEnterTransition = DraweeTransition.createTransitionSet(
+//                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.CENTER_CROP)
+            fragment.sharedElementReturnTransition = TransitionInflater.from(context)
+                    .inflateTransition(R.transition.change_image_trans)
+            fragment.sharedElementEnterTransition = TransitionInflater.from(context)
+                    .inflateTransition(R.transition.change_image_trans)
 
             // 25.1.0以下的support包,Material过渡动画只有在进栈时有,返回时没有;
             // 25.1.0+的support包，SharedElement正常
