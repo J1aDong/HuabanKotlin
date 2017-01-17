@@ -1,8 +1,9 @@
 package com.j1adong.huabankotlin.event;
 
+import android.view.View;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.j1adong.huabankotlin.adapter.PinsViewProvider;
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 
 /**
  * Created by J1aDong on 2017/1/16.
@@ -10,33 +11,45 @@ import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 
 public class EventGotoDetail
 {
+	int position;
+	View v;
+	PinsViewProvider.ViewHolder holder;
 
-	SimpleDraweeView draweeView;
-	PinsEntity pins;
-
-	public EventGotoDetail(SimpleDraweeView draweeView, PinsEntity pins)
+	public EventGotoDetail(int position, View v,
+			PinsViewProvider.ViewHolder holder)
 	{
-		this.draweeView = draweeView;
-		this.pins = pins;
+		this.position = position;
+		this.v = v;
+		this.holder = holder;
 	}
 
-	public PinsEntity getPins()
+	public int getPosition()
 	{
-		return pins;
+		return position;
 	}
 
-	public void setPins(PinsEntity pins)
+	public void setPosition(int position)
 	{
-		this.pins = pins;
+		this.position = position;
 	}
 
-	public SimpleDraweeView getDraweeView()
+	public View getV()
 	{
-		return draweeView;
+		return v;
 	}
 
-	public void setDraweeView(SimpleDraweeView draweeView)
+	public void setV(View v)
 	{
-		this.draweeView = draweeView;
+		this.v = v;
+	}
+
+	public PinsViewProvider.ViewHolder getHolder()
+	{
+		return holder;
+	}
+
+	public void setHolder(PinsViewProvider.ViewHolder holder)
+	{
+		this.holder = holder;
 	}
 }

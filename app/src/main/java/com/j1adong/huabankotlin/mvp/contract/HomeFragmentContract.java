@@ -6,6 +6,8 @@ import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
 import com.jess.arms.mvp.BaseView;
 import com.jess.arms.mvp.IModel;
 
+import java.util.List;
+
 import me.drakeet.multitype.MultiTypeAdapter;
 import rx.Observable;
 
@@ -28,6 +30,8 @@ public interface HomeFragmentContract
 	interface View extends BaseView
 	{
 		void setAdapter(MultiTypeAdapter adapter);
+
+		void setPins(List<PinsEntity> pinsEntityList);
 	}
 
 	// Model层定义接口,外部只需关心model返回的数据,无需关心内部细节,及是否使用缓存

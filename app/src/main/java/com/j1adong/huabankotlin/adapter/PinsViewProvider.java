@@ -9,6 +9,7 @@ import com.jess.arms.utils.EventBus;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,19 @@ public class PinsViewProvider
 
 		screenWidth = DeviceUtils.getScreenWidth(parent.getContext());
 
-		return new ViewHolder(root);
+		final ViewHolder holder = new ViewHolder(root);
+
+		holder.mImgBackground.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				EventBus.getDefault()
+						.post(new EventGotoDetail(getPosition(holder), v, holder));
+			}
+		});
+
+		return holder;
 	}
 
 	@Override
@@ -65,9 +78,15 @@ public class PinsViewProvider
 		params.height = resizeHeight;
 		imageView.setLayoutParams(params);
 
+		// 把每个图片视图设置不同的Transition名称, 防止在一个视图内有多个相同的名称, 在变换的时候造成混乱
+		// Fragment支持多个View进行变换, 使用适配器时, 需要加以区分
+		ViewCompat.setTransitionName(holder.mImgBackground, String
+				.valueOf(getPosition(holder) + "_img"));
+
 		holder.mImgBackground.setImageURI(imgUrl);
 		holder.mImgAvatar.setImageURI(avatarUrl);
 		holder.mTvUserName.setText(userName);
+
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder
@@ -85,16 +104,26 @@ public class PinsViewProvider
 			super(itemView);
 			ButterKnife.bind(this, itemView);
 			AutoUtils.autoSize(itemView);
+		}
 
-			mImgBackground.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View v)
-				{
-					EventBus.getDefault()
-							.post(new EventGotoDetail(mImgBackground, pins));
-				}
-			});
+		public SimpleDraweeView getmImgBackground()
+		{
+			return mImgBackground;
+		}
+
+		public TextView getmTvUserName()
+		{
+			return mTvUserName;
+		}
+
+		public SimpleDraweeView getmImgAvatar()
+		{
+			return mImgAvatar;
+		}
+
+		public PinsEntity getPins()
+		{
+			return pins;
 		}
 	}
 }

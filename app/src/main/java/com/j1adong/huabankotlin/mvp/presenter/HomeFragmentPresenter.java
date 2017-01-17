@@ -117,6 +117,7 @@ public class HomeFragmentPresenter extends
 							mAdapter.notifyItemRangeInserted(oldCount, newCount
 									- oldCount);
 						}
+						mRootView.setPins(pinsEntityList);
 					}
 				}, new Action1<Throwable>()
 				{

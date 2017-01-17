@@ -2,7 +2,9 @@ package com.j1adong.huabankotlin.ui.fragment
 
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.view.ViewCompat
 import android.view.View
+import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.j1adong.huabankotlin.R
 import com.j1adong.huabankotlin.common.InjectionHeader
@@ -13,6 +15,7 @@ import com.j1adong.huabankotlin.mvp.entity.PinsEntity
 import com.j1adong.huabankotlin.mvp.presenter.DetailFragmentPresenter
 import com.j1adong.huabankotlin.ui.fragment.DetailFragment.DetailFragmentUI.Factory.ID_IMG
 import com.j1adong.huabankotlin.ui.simpleDraweeView
+import com.jess.arms.utils.DeviceUtils
 import com.jess.arms.widget.fragmention.anim.FragmentAnimator
 import org.jetbrains.anko.*
 
@@ -48,7 +51,7 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
 
     override fun initData() {
         val bundle = arguments
-        var imgUrl = bundle.getString(IMG_URL)
+        val imgUrl = bundle.getString(IMG_URL)
 
         mImg?.setImageURI(imgUrl)
     }
@@ -102,14 +105,19 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
 
     class DetailFragmentUI : AnkoComponent<DetailFragment> {
         override fun createView(ui: AnkoContext<DetailFragment>) = with(ui) {
-            verticalLayout {
-                backgroundColor = ui.ctx.resources.getColor(R.color.md_red_400)
+            scrollView {
+                relativeLayout {
+                    simpleDraweeView {
+                        id = ID_IMG
 
-                simpleDraweeView {
-                    id = ID_IMG
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                        adjustViewBounds = true
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                            transitionName = ui.ctx.getString(R.string.image_transition)
+                        }
+                    }.lparams(width = 400, height = 500) {
 
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                        transitionName = ui.ctx.getString(R.string.image_transition)
+                        centerInParent()
                     }
                 }.lparams(width = matchParent, height = matchParent) {
 
@@ -126,16 +134,5 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
     override fun onBackPressedSupport(): Boolean {
         pop()
         return true
-    }
-
-    override fun onCreateFragmentAnimator(): FragmentAnimator {
-        // 获取在SupportActivity里设置的全局动画对象，进行修改
-        val fragmentAnimator = super.onCreateFragmentAnimator()
-        fragmentAnimator.enter = android.R.anim.slide_in_left
-        fragmentAnimator.exit = android.R.anim.slide_out_right
-        return fragmentAnimator
-
-        // 也可以直接通过
-        // return new FragmentAnimator(enter,exit,popEnter,popExit)设置一个全新的动画
     }
 }

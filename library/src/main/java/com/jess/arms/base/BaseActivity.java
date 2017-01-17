@@ -73,6 +73,7 @@ public abstract class BaseActivity<P extends BasePresenter>
 		if( useEventBus() )// 如果要使用eventbus请将此方法返回true
 			EventBus.getDefault().register(this);// 注册到事件主线
 		setContentView(initView());
+		findViews();
 		loadFragment(savedInstanceState);
 
 		// 可以监听该Activity下的所有Fragment的18个 生命周期方法
@@ -93,6 +94,8 @@ public abstract class BaseActivity<P extends BasePresenter>
 		ComponentInject();// 依赖注入
 		initData();
 	}
+
+	protected abstract void findViews();
 
 	/**
 	 * 根部局加载后，注意判断savedInstanceState ==null的时候加载fragment
