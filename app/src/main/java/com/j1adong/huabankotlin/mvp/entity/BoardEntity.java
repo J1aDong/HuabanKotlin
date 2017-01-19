@@ -1,10 +1,12 @@
 package com.j1adong.huabankotlin.mvp.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by J1aDong on 2017/1/9.
  */
-public class BoardEntity
-{
+public class BoardEntity implements Parcelable {
 	/**
 	 * board_id : 30113080 user_id : 16747409 title : 空间设计 description :
 	 * category_id : industrial_design seq : 2 pin_count : 168 follow_count : 13
@@ -25,7 +27,7 @@ public class BoardEntity
 	private int updated_at;
 	private int deleting;
 	private int is_private;
-	private Object extra;
+
 
 	public int getBoard_id()
 	{
@@ -157,13 +159,57 @@ public class BoardEntity
 		this.is_private = is_private;
 	}
 
-	public Object getExtra()
-	{
-		return extra;
+
+	@Override
+	public int describeContents() {
+		return 0;
 	}
 
-	public void setExtra(Object extra)
-	{
-		this.extra = extra;
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.board_id);
+		dest.writeInt(this.user_id);
+		dest.writeString(this.title);
+		dest.writeString(this.description);
+		dest.writeString(this.category_id);
+		dest.writeInt(this.seq);
+		dest.writeInt(this.pin_count);
+		dest.writeInt(this.follow_count);
+		dest.writeInt(this.like_count);
+		dest.writeInt(this.created_at);
+		dest.writeInt(this.updated_at);
+		dest.writeInt(this.deleting);
+		dest.writeInt(this.is_private);
 	}
+
+	public BoardEntity() {
+	}
+
+	protected BoardEntity(Parcel in) {
+		this.board_id = in.readInt();
+		this.user_id = in.readInt();
+		this.title = in.readString();
+		this.description = in.readString();
+		this.category_id = in.readString();
+		this.seq = in.readInt();
+		this.pin_count = in.readInt();
+		this.follow_count = in.readInt();
+		this.like_count = in.readInt();
+		this.created_at = in.readInt();
+		this.updated_at = in.readInt();
+		this.deleting = in.readInt();
+		this.is_private = in.readInt();
+	}
+
+	public static final Parcelable.Creator<BoardEntity> CREATOR = new Parcelable.Creator<BoardEntity>() {
+		@Override
+		public BoardEntity createFromParcel(Parcel source) {
+			return new BoardEntity(source);
+		}
+
+		@Override
+		public BoardEntity[] newArray(int size) {
+			return new BoardEntity[size];
+		}
+	};
 }

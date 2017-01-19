@@ -7,26 +7,29 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.j1adong.huabankotlin.R
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEActivity
+import com.j1adong.huabankotlin.common.WEFragment
+import com.j1adong.huabankotlin.common.WEMainFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
 import com.j1adong.huabankotlin.event.EventConstant
 import com.j1adong.huabankotlin.event.EventString
 import com.j1adong.huabankotlin.mvp.contract.HomeActivityContract
-import com.j1adong.huabankotlin.mvp.presenter.HomePresenter
+import com.j1adong.huabankotlin.mvp.presenter.MainPresenter
 import com.j1adong.huabankotlin.ui.activity.MainActivity.MainActivityUI.Factory.ID_BOTTOMBAR
 import com.j1adong.huabankotlin.ui.bottomNavigationBar
-import com.j1adong.huabankotlin.ui.fragment.ExploreFragment
-import com.j1adong.huabankotlin.ui.fragment.HomeFragment
-import com.j1adong.huabankotlin.ui.fragment.MineFragment
-import com.j1adong.huabankotlin.ui.fragment.NewsFragment
+import com.j1adong.huabankotlin.ui.fragment.*
+import com.jess.arms.base.BaseFragment
 import com.jess.arms.utils.EventBus
 import com.jess.arms.widget.fragmention.SupportFragment
 import com.socks.library.KLog
 import com.squareup.otto.Subscribe
 import org.jetbrains.anko.*
 
-class MainActivity : WEActivity<HomePresenter>(), HomeActivityContract.View {
-    val FIRST = 0
+class MainActivity : WEActivity<MainPresenter>(), HomeActivityContract.View, WEMainFragment.OnBackToFirstListener {
+    override fun onBackToFirstFragment() {
+        mBottomBar?.selectTab(0)
+    }
 
+    val FIRST = 0
     val SECOND = 1
     val THIRD = 2
     val FOURTH = 3
@@ -57,7 +60,7 @@ class MainActivity : WEActivity<HomePresenter>(), HomeActivityContract.View {
 
     override fun loadFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            mFragments[FIRST] = HomeFragment.newInstance()
+            mFragments[FIRST] = FirstFragemnt.newInstance()
             mFragments[SECOND] = ExploreFragment.newInstance()
             mFragments[THIRD] = NewsFragment.newInstance()
             mFragments[FOURTH] = MineFragment.newInstance()
@@ -71,7 +74,7 @@ class MainActivity : WEActivity<HomePresenter>(), HomeActivityContract.View {
             // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题
 
             // 这里我们需要拿到mFragments的引用,也可以通过getSupportFragmentManager.getFragments()自行进行判断查找(效率更高些),用下面的方法查找更方便些
-            mFragments[FIRST] = findFragment(HomeFragment::class.java)
+            mFragments[FIRST] = findFragment(FirstFragemnt::class.java)
             mFragments[SECOND] = findFragment(ExploreFragment::class.java)
             mFragments[THIRD] = findFragment(NewsFragment::class.java)
             mFragments[FOURTH] = findFragment(MineFragment::class.java)
@@ -109,6 +112,25 @@ class MainActivity : WEActivity<HomePresenter>(), HomeActivityContract.View {
                 KLog.w(position)
                 if (position == 0) {
                     EventBus.getDefault().post(EventString(EventConstant.REFRESH_ALL_EVENT))
+                }
+
+                val currentFragment = mFragments[position]
+                val count = currentFragment?.getChildFragmentManager()?.backStackEntryCount
+
+                // 如果不在该类别Fragment的主页,则回到主页;
+                if (count != null) {
+                    if (count > 1) {
+                        if (currentFragment is FirstFragemnt) {
+                            currentFragment.popToChild(DetailFragment::class.java, false)
+                        } else if (currentFragment is ExploreFragment) {
+                            //                        currentFragment.popToChild(ViewPagerFragment::class.java, false)
+                        } else if (currentFragment is NewsFragment) {
+                            //                        currentFragment.popToChild(ShopFragment::class.java, false)
+                        } else if (currentFragment is MineFragment) {
+                            //                        currentFragment.popToChild(MeFragment::class.java, false)
+                        }
+                        return
+                    }
                 }
             }
 

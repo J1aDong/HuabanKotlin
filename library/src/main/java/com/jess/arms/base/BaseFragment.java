@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.utils.AutoLayout;
 import com.jess.arms.utils.EventBus;
 import com.jess.arms.widget.fragmention.SupportFragment;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import javax.inject.Inject;
 
@@ -41,7 +41,7 @@ public abstract class BaseFragment<P extends BasePresenter>
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-		AutoUtils.auto(view);
+		AutoLayout.auto(view);
 	}
 
 	@Override

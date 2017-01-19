@@ -13,16 +13,16 @@ import javax.inject.Inject;
  * Created by J1aDong on 2017/1/7.
  */
 @ActivityScope
-public class HomePresenter extends
+public class MainPresenter extends
 		BasePresenter<HomeActivityContract.Model, HomeActivityContract.View>
 {
 	private RxErrorHandler mErrorHandler;
 	private Application mApplication;
 
 	@Inject
-	public HomePresenter(HomeActivityContract.Model model,
-			HomeActivityContract.View rootView, RxErrorHandler mErrorHandler,
-			Application mApplication)
+	public MainPresenter(HomeActivityContract.Model model,
+						 HomeActivityContract.View rootView, RxErrorHandler mErrorHandler,
+						 Application mApplication)
 	{
 		super(model, rootView);
 		this.mErrorHandler = mErrorHandler;

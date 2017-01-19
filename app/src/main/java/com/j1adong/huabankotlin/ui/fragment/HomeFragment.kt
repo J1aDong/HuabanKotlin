@@ -6,10 +6,13 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.transition.Explode
 import android.transition.Fade
 import android.transition.TransitionInflater
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.drawee.view.DraweeTransition
 import com.j1adong.huabankotlin.R
@@ -20,7 +23,7 @@ import com.j1adong.huabankotlin.event.EventConstant
 import com.j1adong.huabankotlin.event.EventGotoDetail
 import com.j1adong.huabankotlin.event.EventString
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity
+import com.j1adong.huabankotlin.mvp.entity.PinEntity
 import com.j1adong.huabankotlin.mvp.presenter.HomeFragmentPresenter
 import com.j1adong.huabankotlin.ui.fragment.HomeFragment.HomeFragmentUI.Factory.ID_RECYCLERVIEW
 import com.j1adong.huabankotlin.ui.fragment.HomeFragment.HomeFragmentUI.Factory.ID_SWIPEREFRESHLAYOUT
@@ -51,22 +54,18 @@ import org.jetbrains.anko.support.v4.swipeRefreshLayout
 
 class HomeFragment : WEFragment<HomeFragmentPresenter>(), HomeFragmentContract.View {
 
-    var pinsEntityList: MutableList<PinsEntity>? = null
+    var pinsEntityList: MutableList<PinEntity>? = null
 
-    override fun setPins(pinsEntityList: MutableList<PinsEntity>?) {
+    override fun setPins(pinsEntityList: MutableList<PinEntity>?) {
         this.pinsEntityList = pinsEntityList
     }
 
     @Subscribe fun gotoDetailFragment(event: EventGotoDetail) {
         val fragment = DetailFragment.newInstance(event.holder.pins)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            exitTransition = Fade()
+            exitTransition = Explode()
 
             fragment.enterTransition = Fade()
-//            fragment.sharedElementReturnTransition = DraweeTransition.createTransitionSet(
-//                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.CENTER_CROP)
-//            fragment.sharedElementEnterTransition = DraweeTransition.createTransitionSet(
-//                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.CENTER_CROP)
             fragment.sharedElementReturnTransition = TransitionInflater.from(context)
                     .inflateTransition(R.transition.change_image_trans)
             fragment.sharedElementEnterTransition = TransitionInflater.from(context)

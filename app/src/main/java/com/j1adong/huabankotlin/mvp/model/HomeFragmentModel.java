@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.google.gson.Gson;
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract;
-import com.j1adong.huabankotlin.mvp.entity.HbData;
+import com.j1adong.huabankotlin.mvp.entity.HttpPinsResult;
 import com.j1adong.huabankotlin.mvp.model.cache.CacheManager;
 import com.j1adong.huabankotlin.mvp.model.service.ServiceManager;
 import com.jess.arms.di.scope.ActivityScope;
@@ -58,17 +58,17 @@ public class HomeFragmentModel extends BaseModel<ServiceManager, CacheManager>
 	}
 
 	@Override
-	public Observable<HbData> getAll(Integer limit, Integer max, boolean update)
+	public Observable<HttpPinsResult> getAll(Integer limit, Integer max, boolean update)
 	{
-		Observable<HbData> datas = mServiceManager.getCommonService()
-				.getAll(limit, max);
+		Observable<HttpPinsResult> datas = mServiceManager.getCommonService()
+				.getAllPins(limit, max);
 		return mCacheManager.getCommonCache()
 				.getAll(datas, new DynamicKey(max == null ? 0
 						: max), new EvictDynamicKey(update))
-				.flatMap(new Func1<Reply<HbData>, Observable<HbData>>()
+				.flatMap(new Func1<Reply<HttpPinsResult>, Observable<HttpPinsResult>>()
 				{
 					@Override
-					public Observable<HbData> call(Reply<HbData> stringReply)
+					public Observable<HttpPinsResult> call(Reply<HttpPinsResult> stringReply)
 					{
 						return Observable.just(stringReply.getData());
 					}

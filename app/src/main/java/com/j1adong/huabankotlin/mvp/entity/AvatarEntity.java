@@ -1,10 +1,12 @@
 package com.j1adong.huabankotlin.mvp.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by J1aDong on 2017/1/9.
  */
-public class AvatarEntity
-{
+public class AvatarEntity implements Parcelable {
 	/**
 	 * id : 66172167 farm : farm1 bucket : hbimg key :
 	 * 3316893cb6e98ee0b534c267dca9ca45609207331146-Eyg56i type : image/jpeg
@@ -99,4 +101,47 @@ public class AvatarEntity
 	{
 		this.frames = frames;
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.id);
+		dest.writeString(this.farm);
+		dest.writeString(this.bucket);
+		dest.writeString(this.key);
+		dest.writeString(this.type);
+		dest.writeInt(this.width);
+		dest.writeInt(this.height);
+		dest.writeInt(this.frames);
+	}
+
+	public AvatarEntity() {
+	}
+
+	protected AvatarEntity(Parcel in) {
+		this.id = in.readInt();
+		this.farm = in.readString();
+		this.bucket = in.readString();
+		this.key = in.readString();
+		this.type = in.readString();
+		this.width = in.readInt();
+		this.height = in.readInt();
+		this.frames = in.readInt();
+	}
+
+	public static final Parcelable.Creator<AvatarEntity> CREATOR = new Parcelable.Creator<AvatarEntity>() {
+		@Override
+		public AvatarEntity createFromParcel(Parcel source) {
+			return new AvatarEntity(source);
+		}
+
+		@Override
+		public AvatarEntity[] newArray(int size) {
+			return new AvatarEntity[size];
+		}
+	};
 }

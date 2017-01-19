@@ -9,6 +9,7 @@ import com.j1adong.huabankotlin.mvp.contract.NewsFragmentContract
 import com.j1adong.huabankotlin.mvp.presenter.NewsFragmentPresenter
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.event.EventString
 import org.jetbrains.anko.*

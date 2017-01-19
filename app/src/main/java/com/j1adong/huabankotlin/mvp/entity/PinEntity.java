@@ -1,10 +1,12 @@
 package com.j1adong.huabankotlin.mvp.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by J1aDong on 2017/1/9.
  */
-public class PinsEntity
-{
+public class PinEntity implements Parcelable {
 	/**
 	 * pin_id : 986620977 user_id : 16747409 board_id : 30113080 file_id :
 	 * 25881667 file :
@@ -39,7 +41,6 @@ public class PinsEntity
 	private int comment_count;
 	private int repin_count;
 	private int is_private;
-	private Object orig_source;
 	private UserEntity user;
 	private BoardEntity board;
 	private ViaUserEntity via_user;
@@ -214,15 +215,6 @@ public class PinsEntity
 		this.is_private = is_private;
 	}
 
-	public Object getOrig_source()
-	{
-		return orig_source;
-	}
-
-	public void setOrig_source(Object orig_source)
-	{
-		this.orig_source = orig_source;
-	}
 
 	public UserEntity getUser()
 	{
@@ -254,4 +246,70 @@ public class PinsEntity
 		this.via_user = via_user;
 	}
 
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.pin_id);
+		dest.writeInt(this.user_id);
+		dest.writeInt(this.board_id);
+		dest.writeInt(this.file_id);
+		dest.writeParcelable(this.file, flags);
+		dest.writeInt(this.media_type);
+		dest.writeString(this.source);
+		dest.writeString(this.link);
+		dest.writeString(this.raw_text);
+		dest.writeInt(this.via);
+		dest.writeInt(this.via_user_id);
+		dest.writeInt(this.original);
+		dest.writeInt(this.created_at);
+		dest.writeInt(this.like_count);
+		dest.writeInt(this.comment_count);
+		dest.writeInt(this.repin_count);
+		dest.writeInt(this.is_private);
+		dest.writeParcelable(this.user, flags);
+		dest.writeParcelable(this.board, flags);
+		dest.writeParcelable(this.via_user, flags);
+	}
+
+	public PinEntity() {
+	}
+
+	protected PinEntity(Parcel in) {
+		this.pin_id = in.readInt();
+		this.user_id = in.readInt();
+		this.board_id = in.readInt();
+		this.file_id = in.readInt();
+		this.file = in.readParcelable(FileEntity.class.getClassLoader());
+		this.media_type = in.readInt();
+		this.source = in.readString();
+		this.link = in.readString();
+		this.raw_text = in.readString();
+		this.via = in.readInt();
+		this.via_user_id = in.readInt();
+		this.original = in.readInt();
+		this.created_at = in.readInt();
+		this.like_count = in.readInt();
+		this.comment_count = in.readInt();
+		this.repin_count = in.readInt();
+		this.is_private = in.readInt();
+		this.user = in.readParcelable(UserEntity.class.getClassLoader());
+		this.board = in.readParcelable(BoardEntity.class.getClassLoader());
+		this.via_user = in.readParcelable(ViaUserEntity.class.getClassLoader());
+	}
+
+	public static final Parcelable.Creator<PinEntity> CREATOR = new Parcelable.Creator<PinEntity>() {
+		@Override
+		public PinEntity createFromParcel(Parcel source) {
+			return new PinEntity(source);
+		}
+
+		@Override
+		public PinEntity[] newArray(int size) {
+			return new PinEntity[size];
+		}
+	};
 }

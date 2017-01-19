@@ -2,8 +2,9 @@ package com.j1adong.huabankotlin.ui.fragment
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.view.ViewCompat
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.j1adong.huabankotlin.R
@@ -11,14 +12,13 @@ import com.j1adong.huabankotlin.common.InjectionHeader
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent
 import com.j1adong.huabankotlin.mvp.contract.DetailFragmentContract
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity
+import com.j1adong.huabankotlin.mvp.entity.PinEntity
 import com.j1adong.huabankotlin.mvp.presenter.DetailFragmentPresenter
 import com.j1adong.huabankotlin.ui.fragment.DetailFragment.DetailFragmentUI.Factory.ID_IMG
 import com.j1adong.huabankotlin.ui.simpleDraweeView
 import com.jess.arms.utils.DeviceUtils
-import com.jess.arms.widget.fragmention.anim.FragmentAnimator
+import com.zhy.autolayout.utils.ScreenUtils
 import org.jetbrains.anko.*
-
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -51,9 +51,23 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
 
     override fun initData() {
         val bundle = arguments
-        val imgUrl = bundle.getString(IMG_URL)
+        val pins: PinEntity = bundle.getParcelable(PINS)
 
+        // 设置图片
+        val imgUrl = "http://img.hb.aicdn.com/" + pins.file.key + "_/fw/486/gifto/true/progressive/true/format/webp"
+        val height = pins.file.height
+        val width = pins.file.width
+        val screenWidth = DeviceUtils.getScreenWidth(activity)
+        val params = mImg?.layoutParams
+        val resizeWidth = screenWidth.toInt()
+        val resizeHeight = (screenWidth * height / width.toDouble()).toInt()
+        params?.width = resizeWidth
+        params?.height = resizeHeight
+        mImg?.layoutParams = params
         mImg?.setImageURI(imgUrl)
+
+        // 获取detail数据
+        mPresenter.getPinDetail(pins.pin_id)
     }
 
     /**
@@ -90,13 +104,14 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
     }
 
     companion object {
-        private val IMG_URL: String = "IMG_URL"
+        private val PINS: String = "PINS"
 
-        fun newInstance(pins: PinsEntity): DetailFragment {
+        fun newInstance(pins: PinEntity): DetailFragment {
             val fragment = DetailFragment()
             val bundle = Bundle()
-            val imgUrl = "http://img.hb.aicdn.com/" + pins.file.key + "_/fw/486/gifto/true/progressive/true/format/webp"
-            bundle.putString(IMG_URL, imgUrl)
+//            val imgUrl = "http://img.hb.aicdn.com/" + pins.file.key + "_/fw/486/gifto/true/progressive/true/format/webp"
+//            bundle.putString(PINS, imgUrl)
+            bundle.putParcelable(PINS, pins)
             fragment.arguments = bundle
 
             return fragment
@@ -115,7 +130,7 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
                         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                             transitionName = ui.ctx.getString(R.string.image_transition)
                         }
-                    }.lparams(width = 400, height = 500) {
+                    }.lparams(width = matchParent, height = wrapContent) {
 
                         centerInParent()
                     }
@@ -129,10 +144,5 @@ class DetailFragment : WEFragment<DetailFragmentPresenter>(), DetailFragmentCont
             val ID_IMG = 3001
         }
 
-    }
-
-    override fun onBackPressedSupport(): Boolean {
-        pop()
-        return true
     }
 }

@@ -1,21 +1,22 @@
 package com.j1adong.huabankotlin.adapter;
 
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.j1adong.huabankotlin.R;
-import com.j1adong.huabankotlin.event.EventGotoDetail;
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
-import com.jess.arms.utils.DeviceUtils;
-import com.jess.arms.utils.EventBus;
-import com.zhy.autolayout.utils.AutoUtils;
-
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.j1adong.huabankotlin.R;
+import com.j1adong.huabankotlin.event.EventGotoDetail;
+import com.j1adong.huabankotlin.mvp.entity.PinEntity;
+import com.jess.arms.utils.DeviceUtils;
+import com.jess.arms.utils.EventBus;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,9 +26,8 @@ import me.drakeet.multitype.ItemViewProvider;
  * Created by J1aDong on 2017/1/9.
  */
 public class PinsViewProvider
-		extends ItemViewProvider<PinsEntity, PinsViewProvider.ViewHolder>
+		extends ItemViewProvider<PinEntity, PinsViewProvider.ViewHolder>
 {
-
 	private float screenWidth;
 
 	@NonNull
@@ -56,7 +56,7 @@ public class PinsViewProvider
 
 	@Override
 	protected void onBindViewHolder(@NonNull final ViewHolder holder,
-			@NonNull final PinsEntity pins)
+			@NonNull final PinEntity pins)
 	{
 		holder.pins = pins;
 		String key = pins.getFile().getKey();
@@ -66,6 +66,8 @@ public class PinsViewProvider
 				+ pins.getUser().getAvatar().getKey()
 				+ "_/fw/486/gifto/true/progressive/true/format/webp";
 		String userName = pins.getUser().getUsername().trim();
+		String type = pins.getBoard().getTitle();
+		String content = pins.getRaw_text();
 
 		int height = pins.getFile().getHeight();
 		int width = pins.getFile().getWidth();
@@ -86,7 +88,16 @@ public class PinsViewProvider
 		holder.mImgBackground.setImageURI(imgUrl);
 		holder.mImgAvatar.setImageURI(avatarUrl);
 		holder.mTvUserName.setText(userName);
-
+		holder.mTvType.setText(type);
+		if( TextUtils.isEmpty(content) )
+		{
+			holder.mTvContent.setVisibility(View.GONE);
+		}
+		else
+		{
+			holder.mTvContent.setVisibility(View.VISIBLE);
+			holder.mTvContent.setText(content);
+		}
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder
@@ -97,7 +108,11 @@ public class PinsViewProvider
 		TextView mTvUserName;
 		@BindView(R.id.img_avatar)
 		SimpleDraweeView mImgAvatar;
-		PinsEntity pins;
+		@BindView(R.id.tv_type)
+		TextView mTvType;
+		@BindView(R.id.tv_content)
+		TextView mTvContent;
+		PinEntity pins;
 
 		ViewHolder(View itemView)
 		{
@@ -121,7 +136,7 @@ public class PinsViewProvider
 			return mImgAvatar;
 		}
 
-		public PinsEntity getPins()
+		public PinEntity getPins()
 		{
 			return pins;
 		}

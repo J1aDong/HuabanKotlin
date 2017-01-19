@@ -1,7 +1,12 @@
 package com.j1adong.huabankotlin.mvp.contract;
 
+import com.j1adong.huabankotlin.mvp.entity.HttpPinResult;
+import com.j1adong.huabankotlin.mvp.entity.HttpPinsResult;
 import com.jess.arms.mvp.BaseView;
 import com.jess.arms.mvp.IModel;
+
+import retrofit2.http.Path;
+import rx.Observable;
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -16,14 +21,17 @@ import com.jess.arms.mvp.IModel;
  * Created by J1aDong on 2017/1/15.
  */
 
-public interface DetailFragmentContract {
-    //对于经常使用的关于UI的方法可以定义到BaseView中,如显示隐藏进度条,和显示文字消息
-    interface View extends BaseView {
+public interface DetailFragmentContract
+{
+	// 对于经常使用的关于UI的方法可以定义到BaseView中,如显示隐藏进度条,和显示文字消息
+	interface View extends BaseView
+	{
 
-    }
+	}
 
-    //Model层定义接口,外部只需关心model返回的数据,无需关心内部细节,及是否使用缓存
-    interface Model extends IModel {
-
-    }
+	// Model层定义接口,外部只需关心model返回的数据,无需关心内部细节,及是否使用缓存
+	interface Model extends IModel
+	{
+		Observable<HttpPinResult> getPinDetail(int pinId);
+	}
 }

@@ -1,10 +1,12 @@
 package com.j1adong.huabankotlin.mvp.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by J1aDong on 2017/1/9.
  */
-public class ViaUserEntity
-{
+public class ViaUserEntity implements Parcelable {
 	/**
 	 * user_id : 7895409 username : 彭猫 urlname : k330f9egno created_at :
 	 * 1369718327 avatar :
@@ -17,7 +19,6 @@ public class ViaUserEntity
 	private String urlname;
 	private int created_at;
 	private AvatarEntity avatar;
-	private Object extra;
 
 	public int getUser_id()
 	{
@@ -69,13 +70,40 @@ public class ViaUserEntity
 		this.avatar = avatar;
 	}
 
-	public Object getExtra()
-	{
-		return extra;
+	@Override
+	public int describeContents() {
+		return 0;
 	}
 
-	public void setExtra(Object extra)
-	{
-		this.extra = extra;
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.user_id);
+		dest.writeString(this.username);
+		dest.writeString(this.urlname);
+		dest.writeInt(this.created_at);
+		dest.writeParcelable(this.avatar, flags);
 	}
+
+	public ViaUserEntity() {
+	}
+
+	protected ViaUserEntity(Parcel in) {
+		this.user_id = in.readInt();
+		this.username = in.readString();
+		this.urlname = in.readString();
+		this.created_at = in.readInt();
+		this.avatar = in.readParcelable(AvatarEntity.class.getClassLoader());
+	}
+
+	public static final Parcelable.Creator<ViaUserEntity> CREATOR = new Parcelable.Creator<ViaUserEntity>() {
+		@Override
+		public ViaUserEntity createFromParcel(Parcel source) {
+			return new ViaUserEntity(source);
+		}
+
+		@Override
+		public ViaUserEntity[] newArray(int size) {
+			return new ViaUserEntity[size];
+		}
+	};
 }

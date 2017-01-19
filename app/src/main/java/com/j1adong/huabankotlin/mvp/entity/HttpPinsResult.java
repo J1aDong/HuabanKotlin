@@ -7,17 +7,17 @@ import java.util.List;
  * Created by J1aDong on 2017/1/9.
  */
 
-public class HbData
+public class HttpPinsResult
 {
 
-	private List<PinsEntity> pins = new ArrayList<>();
+	private List<PinEntity> pins = new ArrayList<>();
 
-	public List<PinsEntity> getPins()
+	public List<PinEntity> getPins()
 	{
 		return pins;
 	}
 
-	public void setPins(List<PinsEntity> pins)
+	public void setPins(List<PinEntity> pins)
 	{
 		pins.clear();
 		this.pins.addAll(pins);

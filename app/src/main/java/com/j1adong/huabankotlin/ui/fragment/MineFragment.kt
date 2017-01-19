@@ -1,7 +1,9 @@
 package com.j1adong.huabankotlin.ui.fragment
 
 import android.content.Intent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 
 import com.j1adong.huabankotlin.common.WEFragment
 import com.j1adong.huabankotlin.di.component.AppComponent

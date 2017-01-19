@@ -3,13 +3,19 @@ package com.j1adong.huabankotlin.mvp.presenter;
 import android.app.Application;
 
 import com.j1adong.huabankotlin.mvp.contract.DetailFragmentContract;
+import com.j1adong.huabankotlin.mvp.entity.HttpPinResult;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
 import com.jess.arms.widget.imageloader.ImageLoader;
+import com.socks.library.KLog;
 
 import javax.inject.Inject;
 
+import retrofit2.http.Path;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -20,33 +26,57 @@ import javax.inject.Inject;
  * 如果想生成Fragment的相关文件,则将上面构建顺序中的Activity换为Fragment,并将Component中inject方法的参数改为此Fragment
  */
 
-
 /**
  * Created by J1aDong on 2017/1/15.
  */
 
 @ActivityScope
-public class DetailFragmentPresenter extends BasePresenter<DetailFragmentContract.Model, DetailFragmentContract.View> {
-    private RxErrorHandler mErrorHandler;
-    private Application mApplication;
-    private ImageLoader mImageLoader;
+public class DetailFragmentPresenter extends
+		BasePresenter<DetailFragmentContract.Model, DetailFragmentContract.View>
+{
+	private RxErrorHandler mErrorHandler;
+	private Application mApplication;
+	private ImageLoader mImageLoader;
 
-    @Inject
-    public DetailFragmentPresenter(DetailFragmentContract.Model model, DetailFragmentContract.View rootView
-            , RxErrorHandler handler, Application application
-            , ImageLoader imageLoader) {
-        super(model, rootView);
-        this.mErrorHandler = handler;
-        this.mApplication = application;
-        this.mImageLoader = imageLoader;
-    }
+	@Inject
+	public DetailFragmentPresenter(DetailFragmentContract.Model model,
+			DetailFragmentContract.View rootView, RxErrorHandler handler,
+			Application application, ImageLoader imageLoader)
+	{
+		super(model, rootView);
+		this.mErrorHandler = handler;
+		this.mApplication = application;
+		this.mImageLoader = imageLoader;
+	}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.mErrorHandler = null;
-        this.mImageLoader = null;
-        this.mApplication = null;
-    }
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		this.mErrorHandler = null;
+		this.mImageLoader = null;
+		this.mApplication = null;
+	}
+
+	public void getPinDetail(int pinId)
+	{
+		mModel.getPinDetail(pinId).subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Action1<HttpPinResult>()
+				{
+					@Override
+					public void call(HttpPinResult httpPinResult)
+					{
+						KLog.w("获取Detail数据成功");
+					}
+				}, new Action1<Throwable>()
+				{
+					@Override
+					public void call(Throwable throwable)
+					{
+						throwable.printStackTrace();
+					}
+				});
+	}
 
 }

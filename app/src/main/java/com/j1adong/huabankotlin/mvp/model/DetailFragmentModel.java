@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.google.gson.Gson;
 import com.j1adong.huabankotlin.mvp.contract.DetailFragmentContract;
+import com.j1adong.huabankotlin.mvp.entity.HttpPinResult;
+import com.j1adong.huabankotlin.mvp.entity.PinEntity;
 import com.j1adong.huabankotlin.mvp.model.cache.CacheManager;
 import com.j1adong.huabankotlin.mvp.model.service.ServiceManager;
 import com.jess.arms.di.scope.ActivityScope;
@@ -11,8 +13,13 @@ import com.jess.arms.mvp.BaseModel;
 
 import javax.inject.Inject;
 
-import static com.jess.arms.utils.Preconditions.checkNotNull;
+import io.rx_cache.DynamicKey;
+import io.rx_cache.EvictDynamicKey;
+import io.rx_cache.Reply;
+import rx.Observable;
+import rx.functions.Func1;
 
+import static com.jess.arms.utils.Preconditions.checkNotNull;
 
 /**
  * 通过Template生成对应页面的MVP和Dagger代码,请注意输入框中输入的名字必须相同
@@ -28,22 +35,44 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  */
 
 @ActivityScope
-public class DetailFragmentModel extends BaseModel<ServiceManager, CacheManager> implements DetailFragmentContract.Model {
-    private Gson mGson;
-    private Application mApplication;
+public class DetailFragmentModel extends BaseModel<ServiceManager, CacheManager>
+		implements DetailFragmentContract.Model
+{
+	private Gson mGson;
+	private Application mApplication;
 
-    @Inject
-    public DetailFragmentModel(ServiceManager serviceManager, CacheManager cacheManager, Gson gson, Application application) {
-        super(serviceManager, cacheManager);
-        this.mGson = gson;
-        this.mApplication = application;
-    }
+	@Inject
+	public DetailFragmentModel(ServiceManager serviceManager,
+			CacheManager cacheManager, Gson gson, Application application)
+	{
+		super(serviceManager, cacheManager);
+		this.mGson = gson;
+		this.mApplication = application;
+	}
 
-    @Override
-    public void onDestory() {
-        super.onDestory();
-        this.mGson = null;
-        this.mApplication = null;
-    }
+	@Override
+	public void onDestory()
+	{
+		super.onDestory();
+		this.mGson = null;
+		this.mApplication = null;
+	}
 
+	@Override
+	public Observable<HttpPinResult> getPinDetail(int pinId)
+	{
+		Observable<HttpPinResult> datas = mServiceManager.getCommonService()
+				.getPinDetail(pinId);
+		return mCacheManager.getCommonCache()
+				.getPinDetail(datas, new DynamicKey(pinId), new EvictDynamicKey(false))
+				.flatMap(new Func1<Reply<HttpPinResult>, Observable<HttpPinResult>>()
+				{
+					@Override
+					public Observable<HttpPinResult> call(
+							Reply<HttpPinResult> httpPinResultReply)
+					{
+						return Observable.just(httpPinResultReply.getData());
+					}
+				});
+	}
 }

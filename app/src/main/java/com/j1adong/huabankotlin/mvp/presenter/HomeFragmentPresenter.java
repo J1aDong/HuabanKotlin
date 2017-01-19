@@ -9,8 +9,8 @@ import com.j1adong.huabankotlin.adapter.Footer;
 import com.j1adong.huabankotlin.adapter.FooterViewProvider;
 import com.j1adong.huabankotlin.adapter.PinsViewProvider;
 import com.j1adong.huabankotlin.mvp.contract.HomeFragmentContract;
-import com.j1adong.huabankotlin.mvp.entity.HbData;
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
+import com.j1adong.huabankotlin.mvp.entity.HttpPinsResult;
+import com.j1adong.huabankotlin.mvp.entity.PinEntity;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.rx.rxerrorhandler.core.RxErrorHandler;
@@ -48,7 +48,7 @@ public class HomeFragmentPresenter extends
 	private ImageLoader mImageLoader;
 
 	Items items = new Items();
-	List<PinsEntity> pinsEntityList = new ArrayList<>();
+	List<PinEntity> pinsEntityList = new ArrayList<>();
 	MultiTypeAdapter mAdapter;
 
 	@Inject
@@ -63,7 +63,7 @@ public class HomeFragmentPresenter extends
 
 		mAdapter = new MultiTypeAdapter(items);
 		// 注册ViewType类型
-		mAdapter.register(PinsEntity.class, new PinsViewProvider());
+		mAdapter.register(PinEntity.class, new PinsViewProvider());
 		mAdapter.register(Footer.class, new FooterViewProvider());
 		mRootView.setAdapter(mAdapter);
 	}
@@ -89,11 +89,11 @@ public class HomeFragmentPresenter extends
 		mModel.getAll(20, max, pullToRefresh).subscribeOn(Schedulers.io())
 				.retryWhen(new RetryWithDelay(3, 2))
 				.observeOn(AndroidSchedulers.mainThread())
-				.compose(RxUtils.<HbData> bindToLifecycle(mRootView))
-				.subscribe(new Action1<HbData>()
+				.compose(RxUtils.<HttpPinsResult> bindToLifecycle(mRootView))
+				.subscribe(new Action1<HttpPinsResult>()
 				{
 					@Override
-					public void call(HbData hbData)
+					public void call(HttpPinsResult hbData)
 					{
 						int oldCount = pinsEntityList.size();
 						mRootView.hideLoading();

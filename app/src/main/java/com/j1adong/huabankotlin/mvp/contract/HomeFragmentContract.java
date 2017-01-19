@@ -1,8 +1,7 @@
 package com.j1adong.huabankotlin.mvp.contract;
 
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.j1adong.huabankotlin.mvp.entity.HbData;
-import com.j1adong.huabankotlin.mvp.entity.PinsEntity;
+import com.j1adong.huabankotlin.mvp.entity.HttpPinsResult;
+import com.j1adong.huabankotlin.mvp.entity.PinEntity;
 import com.jess.arms.mvp.BaseView;
 import com.jess.arms.mvp.IModel;
 
@@ -31,12 +30,12 @@ public interface HomeFragmentContract
 	{
 		void setAdapter(MultiTypeAdapter adapter);
 
-		void setPins(List<PinsEntity> pinsEntityList);
+		void setPins(List<PinEntity> pinsEntityList);
 	}
 
 	// Model层定义接口,外部只需关心model返回的数据,无需关心内部细节,及是否使用缓存
 	interface Model extends IModel
 	{
-		Observable<HbData> getAll(Integer limit, Integer max, boolean update);
+		Observable<HttpPinsResult> getAll(Integer limit, Integer max, boolean update);
 	}
 }
